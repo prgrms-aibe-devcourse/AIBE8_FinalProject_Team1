@@ -16,6 +16,7 @@ export type CursorPosition = {
 
 type NewsEditorProps = {
   fileName: string
+  languageId: string
   content: string
   onCursorChange: (position: CursorPosition) => void
 }
@@ -121,6 +122,7 @@ const EDITOR_OPTIONS: monaco.editor.IStandaloneEditorConstructionOptions = {
 // Monaco Editor는 이 컴포넌트에서만 쓴다 (CLEAN_CODE.md 6. 외부 코드와의 경계)
 export function NewsEditor({
   fileName,
+  languageId,
   content,
   onCursorChange,
 }: NewsEditorProps) {
@@ -143,7 +145,7 @@ export function NewsEditor({
     <Editor
       theme={THEME_NAME}
       path={fileName}
-      defaultLanguage="typescript"
+      defaultLanguage={languageId}
       defaultValue={content}
       options={EDITOR_OPTIONS}
       onMount={handleMount}

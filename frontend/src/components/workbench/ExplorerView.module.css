@@ -68,11 +68,3 @@
 .activeFileRow {
   background: var(--vscode-list-activeSelectionBackground);
 }
-
-.fileIcon {
-  width: 16px;
-  color: #519aba;
-  font-size: 9px;
-  font-weight: 700;
-  text-align: center;
-}

@@ -19,12 +19,6 @@
   color: var(--vscode-descriptionForeground);
 }
 
-.fileIcon {
-  color: #519aba;
-  font-size: 9px;
-  font-weight: 700;
-}
-
 .editor {
   flex: 1;
   min-height: 0;
@@ -52,4 +46,8 @@
 
 .shortcut kbd {
   font-family: inherit;
+}
+
+.symbolIcon {
+  color: #75beff;
 }

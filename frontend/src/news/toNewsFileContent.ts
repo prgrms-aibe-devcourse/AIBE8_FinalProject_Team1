@@ -1,32 +1,28 @@
 import type { NewsArticle, NewsCategory } from './sampleNews'
 
-// 카테고리 하나를 에디터에 열 TypeScript 파일 내용으로 바꾼다.
-// 기사 하나가 객체 하나가 되어, 옆에서 보면 설정 파일을 읽는 것처럼 보인다.
+export const ARTICLES_VARIABLE_NAME = 'articles'
+
+// 카테고리 하나를 에디터에 열 JavaScript 파일 내용으로 바꾼다.
+// 팀 디자인 형식: const articles = [ { title, content, link, source }, ... ]
 export function toNewsFileContent(category: NewsCategory): string {
-  const header = [
-    `// ${category.label} 뉴스`,
-    `// 기사 ${category.articles.length}건`,
-    '',
-  ]
   const articleBlocks = category.articles.map(toArticleBlock)
 
-  return [...header, ...articleBlocks].join('\n')
-}
-
-function toArticleBlock(article: NewsArticle, index: number): string {
-  const articleNumber = String(index + 1).padStart(2, '0')
-
   return [
-    `// ${article.publishedAt} · ${article.press}`,
-    `export const article${articleNumber} = {`,
-    `  title: '${escapeQuote(article.title)}',`,
-    `  summary: '${escapeQuote(article.summary)}',`,
-    `  link: '${article.link}',`,
-    '}',
+    `const ${ARTICLES_VARIABLE_NAME} = [`,
+    ...articleBlocks,
+    ']',
     '',
   ].join('\n')
 }
 
-function escapeQuote(text: string): string {
-  return text.replaceAll("'", "\\'")
+// JSON.stringify로 감싸면 따옴표가 들어간 제목도 깨지지 않는 문자열이 된다
+function toArticleBlock(article: NewsArticle): string {
+  return [
+    '  {',
+    `    title: ${JSON.stringify(article.title)},`,
+    `    content: ${JSON.stringify(article.content)},`,
+    `    link: [${JSON.stringify(article.link)}],`,
+    `    source: ${JSON.stringify(article.source)},`,
+    '  },',
+  ].join('\n')
 }
