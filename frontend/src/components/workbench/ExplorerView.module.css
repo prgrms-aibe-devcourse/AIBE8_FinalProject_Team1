@@ -12,8 +12,8 @@
 
 .sectionHeader,
 .row,
-.fileRow,
-.activeFileRow {
+.selectedRow,
+.inputRow {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -23,12 +23,17 @@
   border: none;
   background: none;
   text-align: left;
+  white-space: nowrap;
   cursor: pointer;
 }
 
 .sectionHeader {
   border-top: 1px solid var(--vscode-sideBarSectionHeader-border);
   font-weight: 600;
+}
+
+.tree .sectionHeader {
+  border-top: none;
 }
 
 .workspaceHeader {
@@ -47,24 +52,28 @@
   visibility: visible;
 }
 
-.tree .sectionHeader {
-  border-top: none;
-}
-
-.row {
-  padding-left: 8px;
-}
-
-.fileRow,
-.activeFileRow {
-  padding-left: 30px;
-}
-
-.row:hover,
-.fileRow:hover {
+.row:hover {
   background: var(--vscode-list-hoverBackground);
 }
 
-.activeFileRow {
+.selectedRow {
   background: var(--vscode-list-activeSelectionBackground);
+}
+
+.chevronSpace {
+  flex-shrink: 0;
+  width: 16px;
+}
+
+.nameInput {
+  flex: 1;
+  min-width: 0;
+  height: 20px;
+  margin-right: 8px;
+  padding: 0 4px;
+  border: 1px solid var(--vscode-focusBorder);
+  outline: none;
+  background: var(--vscode-input-background);
+  color: var(--vscode-foreground);
+  font: inherit;
 }

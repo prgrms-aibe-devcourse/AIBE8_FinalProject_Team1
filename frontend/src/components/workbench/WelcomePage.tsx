@@ -1,8 +1,9 @@
 import { sampleNewsCategories } from '../../news/sampleNews'
+import { toNewsFilePath } from '../../news/newsFiles'
 import styles from './WelcomePage.module.css'
 
 type WelcomePageProps = {
-  onOpenFile: (fileName: string) => void
+  onOpenFile: (path: string) => void
 }
 
 const START_ITEMS = [
@@ -36,7 +37,7 @@ export function WelcomePage({ onOpenFile }: WelcomePageProps) {
               key={category.fileName}
               type="button"
               className={styles.link}
-              onClick={() => onOpenFile(category.fileName)}
+              onClick={() => onOpenFile(toNewsFilePath(category))}
             >
               {category.fileName}
               <span className={styles.path}>~/news/src</span>

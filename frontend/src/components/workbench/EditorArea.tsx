@@ -1,4 +1,4 @@
-import { sampleNewsCategories } from '../../news/sampleNews'
+import { findNewsCategory } from '../../news/newsFiles'
 import {
   ARTICLES_VARIABLE_NAME,
   toNewsFileContent,
@@ -15,15 +15,13 @@ import styles from './EditorArea.module.css'
 type EditorAreaProps = {
   openTabIds: string[]
   activeTabId: string | undefined
-  onOpenFile: (fileName: string) => void
+  onOpenFile: (path: string) => void
   onSelectTab: (tabId: string) => void
   onCloseTab: (tabId: string) => void
   onCursorChange: (position: CursorPosition) => void
   onRun: () => void
   onOpenAgent: (tab: AgentTab) => void
 }
-
-const FOLDER_NAME = 'src'
 
 export function EditorArea({
   openTabIds,
@@ -35,9 +33,7 @@ export function EditorArea({
   onRun,
   onOpenAgent,
 }: EditorAreaProps) {
-  const activeCategory = sampleNewsCategories.find(
-    (category) => category.fileName === activeTabId,
-  )
+  const isFileOpen = activeTabId !== undefined && activeTabId !== WELCOME_TAB_ID
 
   return (
     <section className={styles.editorArea}>
@@ -52,31 +48,56 @@ export function EditorArea({
       {activeTabId === WELCOME_TAB_ID && (
         <WelcomePage onOpenFile={onOpenFile} />
       )}
-      {activeCategory && (
-        <>
-          <div className={styles.breadcrumbs}>
-            <span>{FOLDER_NAME}</span>
+      {isFileOpen && (
+        <FileEditor path={activeTabId} onCursorChange={onCursorChange} />
+      )}
+      {activeTabId === undefined && <EmptyEditor />}
+    </section>
+  )
+}
+
+type FileEditorProps = {
+  path: string
+  onCursorChange: (position: CursorPosition) => void
+}
+
+// 뉴스 파일은 기사를 읽기 전용으로, 탐색기에서 만든 파일은 빈 파일로 열어 입력할 수 있다
+function FileEditor({ path, onCursorChange }: FileEditorProps) {
+  const newsCategory = findNewsCategory(path)
+  const pathSegments = path.split('/')
+  const fileName = pathSegments[pathSegments.length - 1]
+
+  return (
+    <>
+      <div className={styles.breadcrumbs}>
+        {pathSegments.slice(0, -1).map((folderName, index) => (
+          <span key={index} className={styles.breadcrumb}>
+            {folderName}
             <i className="codicon codicon-chevron-right" />
-            <FileIcon fileName={activeCategory.fileName} />
-            <span>{activeCategory.fileName}</span>
+          </span>
+        ))}
+        <FileIcon fileName={fileName} />
+        <span>{fileName}</span>
+        {newsCategory && (
+          <>
             <i className="codicon codicon-chevron-right" />
             <i
               className={`codicon codicon-symbol-variable ${styles.symbolIcon}`}
             />
             <span>{ARTICLES_VARIABLE_NAME}</span>
-          </div>
-          <div className={styles.editor}>
-            <NewsEditor
-              fileName={activeCategory.fileName}
-              languageId={getFileType(activeCategory.fileName).languageId}
-              content={toNewsFileContent(activeCategory)}
-              onCursorChange={onCursorChange}
-            />
-          </div>
-        </>
-      )}
-      {activeTabId === undefined && <EmptyEditor />}
-    </section>
+          </>
+        )}
+      </div>
+      <div className={styles.editor}>
+        <NewsEditor
+          path={path}
+          languageId={getFileType(fileName).languageId}
+          content={newsCategory ? toNewsFileContent(newsCategory) : ''}
+          isReadOnly={newsCategory !== undefined}
+          onCursorChange={onCursorChange}
+        />
+      </div>
+    </>
   )
 }
 
