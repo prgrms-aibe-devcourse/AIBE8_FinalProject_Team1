@@ -14,6 +14,7 @@ const VIEW_TITLES: Record<SideBarView, string> = {
   'source-control': 'Source Control',
   'run-debug': 'Run and Debug: Run',
   extensions: 'Extensions',
+  containers: 'Containers',
 }
 
 // 탐색기 외의 화면은 VSCode 모양만 보여준다
@@ -31,6 +32,7 @@ const PLACEHOLDER_CONTENTS: Record<
     buttonLabel: 'Run and Debug',
   },
   extensions: { inputPlaceholder: 'Search Extensions in Marketplace' },
+  containers: { message: 'No containers are running.' },
 }
 
 export function SideBar({ activeView, explorer }: SideBarProps) {

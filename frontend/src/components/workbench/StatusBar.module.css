@@ -28,8 +28,8 @@
   padding: 0 10px;
 }
 
-.remote :global(.codicon),
-.item :global(.codicon) {
+.remote :global(.codicon[class*='codicon-']),
+.item :global(.codicon[class*='codicon-']) {
   font-size: 14px;
 }
 

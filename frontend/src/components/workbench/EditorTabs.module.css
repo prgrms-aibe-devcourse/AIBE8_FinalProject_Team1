@@ -57,10 +57,6 @@
   font-style: italic;
 }
 
-.welcomeLabel :global(.codicon) {
-  color: #3794ff;
-}
-
 .closeButton {
   display: flex;
   align-items: center;
@@ -89,8 +85,4 @@
   align-items: center;
   gap: 4px;
   padding: 0 8px;
-}
-
-.claudeIcon {
-  color: #d97757;
 }

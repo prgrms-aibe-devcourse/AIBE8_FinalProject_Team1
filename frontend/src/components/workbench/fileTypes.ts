@@ -14,9 +14,51 @@ const JAVASCRIPT: FileType = {
   iconColor: '#cbcb41',
 }
 
+// FileIcon이 이 값을 보면 글자 대신 원자 모양 SVG를 그린다
+export const REACT_ICON = 'react'
+
+const YAML: FileType = {
+  languageId: 'yaml',
+  languageLabel: 'YAML',
+  iconText: '!',
+  iconColor: '#a074c4',
+}
+
 const FILE_TYPES: Record<string, FileType> = {
   mjs: JAVASCRIPT,
   js: JAVASCRIPT,
+  jsx: {
+    languageId: 'jsx',
+    languageLabel: 'JavaScript JSX',
+    iconText: REACT_ICON,
+    iconColor: '#519aba',
+  },
+  tsx: {
+    languageId: 'tsx',
+    languageLabel: 'TypeScript JSX',
+    iconText: REACT_ICON,
+    iconColor: '#519aba',
+  },
+  java: {
+    languageId: 'java',
+    languageLabel: 'Java',
+    iconText: 'J',
+    iconColor: '#cc3e44',
+  },
+  py: {
+    languageId: 'python',
+    languageLabel: 'Python',
+    iconText: 'Py',
+    iconColor: '#519aba',
+  },
+  sql: {
+    languageId: 'sql',
+    languageLabel: 'SQL',
+    iconText: 'DB',
+    iconColor: '#f55385',
+  },
+  yaml: YAML,
+  yml: YAML,
   ts: {
     languageId: 'typescript',
     languageLabel: 'TypeScript',

@@ -1,19 +1,15 @@
+import type { ReactElement } from 'react'
 import styles from './IconButton.module.css'
 
 type IconButtonProps = {
-  icon: string
+  // 문자열이면 Codicon 이름, 아니면 직접 그린 아이콘 컴포넌트
+  icon: string | ReactElement
   label: string
-  iconClassName?: string
   onClick?: () => void
 }
 
-// 툴바에 쓰는 Codicon 아이콘 버튼
-export function IconButton({
-  icon,
-  label,
-  iconClassName = '',
-  onClick,
-}: IconButtonProps) {
+// 툴바에 쓰는 아이콘 버튼
+export function IconButton({ icon, label, onClick }: IconButtonProps) {
   return (
     <button
       type="button"
@@ -22,7 +18,11 @@ export function IconButton({
       aria-label={label}
       onClick={onClick}
     >
-      <i className={`codicon codicon-${icon} ${iconClassName}`} />
+      {typeof icon === 'string' ? (
+        <i className={`codicon codicon-${icon}`} />
+      ) : (
+        icon
+      )}
     </button>
   )
 }

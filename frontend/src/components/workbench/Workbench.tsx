@@ -68,6 +68,7 @@ export function Workbench() {
         <ActivityBar
           activeView={layout.isSideBarVisible ? layout.activeView : undefined}
           onSelectView={layout.selectView}
+          onOpenClaudeCode={() => openAgent('claude-code')}
         />
         {layout.isSideBarVisible && (
           <SideBar

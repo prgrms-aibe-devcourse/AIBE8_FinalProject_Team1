@@ -30,11 +30,20 @@ const FONT_FAMILY = '"Victor Mono", Menlo, Monaco, "Courier New", monospace'
 const HIGHLIGHT_LANGUAGES = [
   'javascript',
   'typescript',
+  'jsx',
+  'tsx',
   'json',
   'markdown',
   'css',
   'html',
+  'java',
+  'python',
+  'sql',
+  'yaml',
 ]
+
+// Monaco에는 jsx·tsx 언어가 따로 없어서 등록해야 Shiki가 JSX 문법으로 색을 칠한다
+const EXTRA_MONACO_LANGUAGES = ['jsx', 'tsx']
 
 // 키·변수 이름을 Victor Mono 기울임(필기체)으로 보여준다.
 // shikiToMonaco는 색과 기울임을 한 쌍으로 찾으므로, Dark+ 색을 같이 적는다
@@ -93,6 +102,7 @@ async function setupEditor() {
     themes: [theme],
     langs: HIGHLIGHT_LANGUAGES,
   })
+  EXTRA_MONACO_LANGUAGES.forEach((id) => monaco.languages.register({ id }))
   shikiToMonaco(highlighter, monaco)
 
   // 글꼴이 내려받아지기 전에 Monaco가 글자 폭을 재면 커서 위치가 어긋나서 먼저 기다린다

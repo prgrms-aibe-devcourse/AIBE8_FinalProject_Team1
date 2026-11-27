@@ -28,9 +28,9 @@
   cursor: pointer;
 }
 
-.item :global(.codicon),
-.activeItem :global(.codicon) {
-  font-size: 26px;
+.item :global(.codicon[class*='codicon-']),
+.activeItem :global(.codicon[class*='codicon-']) {
+  font-size: 24px;
 }
 
 .item:hover,
@@ -46,4 +46,33 @@
   width: 2px;
   background: var(--vscode-activityBar-activeBorder);
   content: '';
+}
+
+.badge {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background: var(--vscode-activityBarBadge-background);
+  color: var(--vscode-activityBarBadge-foreground);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+}
+
+/* 다른 아이콘과 같은 회색으로 보이게 한다. 가리키면 원래 주황색 */
+.claudeCodeIcon {
+  display: flex;
+  filter: grayscale(1) brightness(1.15);
+  opacity: 0.75;
+}
+
+.item:hover .claudeCodeIcon {
+  filter: none;
+  opacity: 1;
 }

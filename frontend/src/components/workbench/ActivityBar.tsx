@@ -1,13 +1,23 @@
+import type { ReactNode } from 'react'
+import { ClaudeCodeIcon } from '../icons/ClaudeCodeIcon'
 import type { SideBarView } from './useWorkbenchLayout'
 import styles from './ActivityBar.module.css'
 
 type ActivityBarProps = {
   activeView: SideBarView | undefined
   onSelectView: (view: SideBarView) => void
+  onOpenClaudeCode: () => void
 }
 
-const VIEW_ITEMS: { view: SideBarView; icon: string; label: string }[] = [
-  { view: 'explorer', icon: 'files', label: 'Explorer (⇧⌘E)' },
+type ViewItem = {
+  view: SideBarView
+  icon: string
+  label: string
+  badgeCount?: number
+}
+
+const MAIN_VIEW_ITEMS: ViewItem[] = [
+  { view: 'explorer', icon: 'files', label: 'Explorer (⇧⌘E)', badgeCount: 1 },
   { view: 'search', icon: 'search', label: 'Search (⇧⌘F)' },
   {
     view: 'source-control',
@@ -15,46 +25,91 @@ const VIEW_ITEMS: { view: SideBarView; icon: string; label: string }[] = [
     label: 'Source Control (⌃⇧G)',
   },
   { view: 'run-debug', icon: 'debug-alt', label: 'Run and Debug (⇧⌘D)' },
-  { view: 'extensions', icon: 'extensions', label: 'Extensions (⇧⌘X)' },
+  {
+    view: 'extensions',
+    icon: 'extensions',
+    label: 'Extensions (⇧⌘X)',
+    badgeCount: 1,
+  },
 ]
 
-export function ActivityBar({ activeView, onSelectView }: ActivityBarProps) {
+const CONTAINERS_ITEM: ViewItem = {
+  view: 'containers',
+  icon: 'package',
+  label: 'Containers',
+}
+
+export function ActivityBar({
+  activeView,
+  onSelectView,
+  onOpenClaudeCode,
+}: ActivityBarProps) {
+  const renderViewItem = (item: ViewItem) => (
+    <ActivityItem
+      key={item.view}
+      label={item.label}
+      isActive={item.view === activeView}
+      badgeCount={item.badgeCount}
+      onClick={() => onSelectView(item.view)}
+    >
+      <i className={`codicon codicon-${item.icon}`} />
+    </ActivityItem>
+  )
+
   return (
     <nav className={styles.activityBar}>
       <div className={styles.items}>
-        {VIEW_ITEMS.map((item) => (
-          <button
-            key={item.view}
-            type="button"
-            className={
-              item.view === activeView ? styles.activeItem : styles.item
-            }
-            title={item.label}
-            aria-label={item.label}
-            onClick={() => onSelectView(item.view)}
-          >
-            <i className={`codicon codicon-${item.icon}`} />
-          </button>
-        ))}
+        {MAIN_VIEW_ITEMS.map(renderViewItem)}
+        <ActivityItem
+          label="Claude Code"
+          isActive={false}
+          onClick={onOpenClaudeCode}
+        >
+          <span className={styles.claudeCodeIcon}>
+            <ClaudeCodeIcon size={22} />
+          </span>
+        </ActivityItem>
+        {renderViewItem(CONTAINERS_ITEM)}
       </div>
       <div className={styles.items}>
-        <button
-          type="button"
-          className={styles.item}
-          title="Accounts"
-          aria-label="Accounts"
-        >
+        <ActivityItem label="Accounts" isActive={false}>
           <i className="codicon codicon-account" />
-        </button>
-        <button
-          type="button"
-          className={styles.item}
-          title="Manage"
-          aria-label="Manage"
-        >
+        </ActivityItem>
+        <ActivityItem label="Manage" isActive={false} badgeCount={1}>
           <i className="codicon codicon-settings-gear" />
-        </button>
+        </ActivityItem>
       </div>
     </nav>
+  )
+}
+
+type ActivityItemProps = {
+  label: string
+  isActive: boolean
+  badgeCount?: number
+  onClick?: () => void
+  children: ReactNode
+}
+
+function ActivityItem({
+  label,
+  isActive,
+  badgeCount,
+  onClick,
+  children,
+}: ActivityItemProps) {
+  return (
+    <button
+      type="button"
+      className={isActive ? styles.activeItem : styles.item}
+      title={label}
+      aria-label={label}
+      onClick={onClick}
+    >
+      {children}
+      {badgeCount !== undefined && (
+        <span className={styles.badge}>{badgeCount}</span>
+      )}
+    </button>
   )
 }
