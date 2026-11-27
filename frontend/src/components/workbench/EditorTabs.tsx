@@ -1,3 +1,6 @@
+import { ClaudeCodeIcon } from '../icons/ClaudeCodeIcon'
+import { CodexIcon } from '../icons/CodexIcon'
+import { AppLogoIcon } from '../icons/AppLogoIcon'
 import { IconButton } from './IconButton'
 import { FileIcon } from './FileIcon'
 import { getNodeName } from './useExplorerTree'
@@ -49,13 +52,12 @@ export function EditorTabs({
       <div className={styles.actions}>
         <IconButton icon="play" label="Run Code" onClick={onRun} />
         <IconButton
-          icon="sparkle"
+          icon={<ClaudeCodeIcon />}
           label="Open in Claude Code"
-          iconClassName={styles.claudeIcon}
           onClick={() => onOpenAgent('claude-code')}
         />
         <IconButton
-          icon="robot"
+          icon={<CodexIcon />}
           label="Open in Codex"
           onClick={() => onOpenAgent('codex')}
         />
@@ -70,7 +72,7 @@ function TabLabel({ tabId }: { tabId: string }) {
   if (tabId === WELCOME_TAB_ID) {
     return (
       <span className={styles.welcomeLabel}>
-        <i className="codicon codicon-info" />
+        <AppLogoIcon />
         Welcome
       </span>
     )

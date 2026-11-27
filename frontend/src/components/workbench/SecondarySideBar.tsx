@@ -1,19 +1,28 @@
-import { useState, type FormEvent } from 'react'
+import { useState, type FormEvent, type ReactElement } from 'react'
+import { ClaudeCodeIcon } from '../icons/ClaudeCodeIcon'
+import { CodexIcon } from '../icons/CodexIcon'
 import { IconButton } from './IconButton'
 import styles from './SecondarySideBar.module.css'
 
 export type AgentTab = 'codex' | 'claude-code'
 
 // 노션 요구사항: Codex 탭은 익명 전체 채팅, Claude Code 탭은 친구와 1:1 채팅
-const AGENT_TABS: { tab: AgentTab; label: string; emptyMessage: string }[] = [
+const AGENT_TABS: {
+  tab: AgentTab
+  label: string
+  icon: ReactElement
+  emptyMessage: string
+}[] = [
   {
     tab: 'codex',
     label: 'Codex',
+    icon: <CodexIcon />,
     emptyMessage: 'Chat anonymously with everyone online.',
   },
   {
     tab: 'claude-code',
     label: 'Claude Code',
+    icon: <ClaudeCodeIcon />,
     emptyMessage: 'Pick a friend to start a private chat.',
   },
 ]
@@ -67,7 +76,7 @@ export function SecondarySideBar({
               }
               onClick={() => onSelectTab(agentTab.tab)}
             >
-              <i className="codicon codicon-sparkle" />
+              {agentTab.icon}
               {agentTab.label}
             </button>
           ))}
