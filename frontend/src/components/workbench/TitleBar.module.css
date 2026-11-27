@@ -1,0 +1,43 @@
+.titleBar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  flex-shrink: 0;
+  height: 35px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--vscode-titleBar-border);
+  background: var(--vscode-titleBar-activeBackground);
+  color: var(--vscode-titleBar-activeForeground);
+}
+
+.left,
+.center,
+.right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.right {
+  justify-content: flex-end;
+}
+
+.commandCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: min(600px, 38vw);
+  height: 22px;
+  margin-left: 4px;
+  border: 1px solid var(--vscode-commandCenter-border);
+  border-radius: 6px;
+  background: var(--vscode-commandCenter-background);
+  color: var(--vscode-titleBar-activeForeground);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.commandCenter :global(.codicon) {
+  font-size: 14px;
+}

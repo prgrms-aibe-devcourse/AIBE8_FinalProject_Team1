@@ -1,0 +1,64 @@
+/*
+ * VSCode 기본 테마(Dark Modern) 색상.
+ * 변수 이름은 VSCode 테마 파일의 색상 키를 따른다 (activityBar.background → --vscode-activityBar-background).
+ * 색상 테마를 추가할 때는 이 값들만 바꾼다.
+ */
+:root {
+  --vscode-foreground: #cccccc;
+  --vscode-descriptionForeground: #9d9d9d;
+  --vscode-focusBorder: #0078d4;
+  --vscode-icon-foreground: #cccccc;
+  --vscode-textLink-foreground: #4daafc;
+
+  --vscode-titleBar-activeBackground: #181818;
+  --vscode-titleBar-activeForeground: #cccccc;
+  --vscode-titleBar-border: #2b2b2b;
+  --vscode-commandCenter-background: #2a2a2a;
+  --vscode-commandCenter-border: #3c3c3c;
+
+  --vscode-activityBar-background: #181818;
+  --vscode-activityBar-border: #2b2b2b;
+  --vscode-activityBar-foreground: #c8c8c8;
+  --vscode-activityBar-inactiveForeground: #7a7a7a;
+  --vscode-activityBar-activeBorder: #0078d4;
+
+  --vscode-sideBar-background: #181818;
+  --vscode-sideBar-border: #2b2b2b;
+  --vscode-sideBarSectionHeader-border: #2b2b2b;
+  --vscode-list-hoverBackground: #2a2d2e;
+  --vscode-list-activeSelectionBackground: #37373d;
+
+  --vscode-editor-background: #1f1f1f;
+  --vscode-editorGroupHeader-tabsBackground: #181818;
+  --vscode-editorGroupHeader-tabsBorder: #2b2b2b;
+  --vscode-tab-activeBackground: #1f1f1f;
+  --vscode-tab-activeForeground: #ffffff;
+  --vscode-tab-activeBorderTop: #0078d4;
+  --vscode-tab-inactiveBackground: #181818;
+  --vscode-tab-inactiveForeground: #9d9d9d;
+  --vscode-tab-border: #2b2b2b;
+
+  --vscode-panel-background: #181818;
+  --vscode-panel-border: #2b2b2b;
+  --vscode-panelTitle-activeBorder: #0078d4;
+  --vscode-panelTitle-activeForeground: #cccccc;
+  --vscode-panelTitle-inactiveForeground: #9d9d9d;
+
+  --vscode-statusBar-background: #181818;
+  --vscode-statusBar-border: #2b2b2b;
+  --vscode-statusBar-foreground: #cccccc;
+  --vscode-statusBarItem-hoverBackground: #f1f1f133;
+
+  --vscode-input-background: #313131;
+  --vscode-input-border: #3c3c3c;
+  --vscode-input-placeholderForeground: #989898;
+  --vscode-button-background: #0078d4;
+  --vscode-button-hoverBackground: #026ec1;
+  --vscode-button-foreground: #ffffff;
+  --vscode-toolbar-hoverBackground: #5a5d5e50;
+
+  --vscode-font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu',
+    'Droid Sans', sans-serif;
+  --vscode-editor-font-family: Menlo, Monaco, 'Courier New', monospace;
+}

@@ -1,0 +1,129 @@
+.secondarySideBar {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 380px;
+  margin: 0 4px 4px 0;
+  overflow: hidden;
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 6px;
+  background: var(--vscode-sideBar-background);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  height: 35px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--vscode-panel-border);
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.tab,
+.activeTab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 8px;
+  border: none;
+  border-radius: 5px;
+  background: none;
+  color: var(--vscode-tab-inactiveForeground);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tab:hover {
+  background: var(--vscode-toolbar-hoverBackground);
+}
+
+.activeTab {
+  background: var(--vscode-list-activeSelectionBackground);
+  color: var(--vscode-tab-activeForeground);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.messages {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.emptyMessage {
+  margin: auto;
+  color: var(--vscode-descriptionForeground);
+}
+
+.message {
+  align-self: flex-end;
+  max-width: 85%;
+  margin: 0;
+  padding: 6px 10px;
+  border: 1px solid var(--vscode-input-border);
+  border-radius: 6px;
+  background: var(--vscode-input-background);
+  user-select: text;
+}
+
+.inputBox {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 8px;
+  padding: 6px 6px 6px 10px;
+  border: 1px solid var(--vscode-input-border);
+  border-radius: 6px;
+  background: var(--vscode-input-background);
+}
+
+.inputBox:focus-within {
+  border-color: var(--vscode-focusBorder);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: none;
+  color: var(--vscode-foreground);
+  font: inherit;
+}
+
+.input::placeholder {
+  color: var(--vscode-input-placeholderForeground);
+}
+
+.sendButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+}
+
+.sendButton:hover {
+  background: var(--vscode-toolbar-hoverBackground);
+}

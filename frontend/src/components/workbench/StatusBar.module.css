@@ -1,0 +1,39 @@
+.statusBar {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  flex-shrink: 0;
+  height: 22px;
+  border-top: 1px solid var(--vscode-statusBar-border);
+  background: var(--vscode-statusBar-background);
+  color: var(--vscode-statusBar-foreground);
+  font-size: 12px;
+}
+
+.side {
+  display: flex;
+  align-items: stretch;
+}
+
+.remote,
+.item {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 6px;
+  cursor: pointer;
+}
+
+.remote {
+  padding: 0 10px;
+}
+
+.remote :global(.codicon),
+.item :global(.codicon) {
+  font-size: 14px;
+}
+
+.remote:hover,
+.item:hover {
+  background: var(--vscode-statusBarItem-hoverBackground);
+}

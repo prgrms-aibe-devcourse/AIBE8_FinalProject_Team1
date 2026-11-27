@@ -1,0 +1,55 @@
+.editorArea {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 6px;
+  background: var(--vscode-editor-background);
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  height: 22px;
+  padding: 0 16px;
+  color: var(--vscode-descriptionForeground);
+}
+
+.fileIcon {
+  color: #519aba;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.editor {
+  flex: 1;
+  min-height: 0;
+}
+
+.emptyEditor {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--vscode-descriptionForeground);
+}
+
+.shortcut {
+  display: grid;
+  grid-template-columns: 160px 80px;
+  gap: 16px;
+}
+
+.shortcut span {
+  text-align: right;
+}
+
+.shortcut kbd {
+  font-family: inherit;
+}
