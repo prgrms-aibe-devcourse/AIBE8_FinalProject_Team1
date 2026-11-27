@@ -3,6 +3,23 @@
   "plugins": ["react", "typescript", "oxc"],
   "rules": {
     "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
+    "react/only-export-components": ["warn", { "allowConstantExport": true }],
+    "typescript/no-explicit-any": "error",
+    "typescript/ban-ts-comment": "error",
+    "eslint/no-unused-vars": "error",
+    "eslint/no-console": "error",
+    "eslint/no-restricted-globals": [
+      "error",
+      {
+        "name": "fetch",
+        "message": "API 호출은 src/api/ 폴더의 함수로만 한다."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/api/**"],
+      "rules": { "eslint/no-restricted-globals": "off" }
+    }
+  ]
 }
