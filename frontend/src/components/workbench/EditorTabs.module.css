@@ -57,7 +57,8 @@
   font-style: italic;
 }
 
-.closeButton {
+.closeButton,
+.dirtyCloseButton {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -76,7 +77,21 @@
   visibility: visible;
 }
 
-.closeButton:hover {
+.dirtyCloseButton {
+  visibility: visible;
+}
+
+.dirtyCloseButton .closeIcon:global(.codicon),
+.dirtyCloseButton:hover .dirtyIcon:global(.codicon) {
+  display: none;
+}
+
+.dirtyCloseButton:hover .closeIcon:global(.codicon) {
+  display: inline-block;
+}
+
+.closeButton:hover,
+.dirtyCloseButton:hover {
   background: var(--vscode-toolbar-hoverBackground);
 }
 

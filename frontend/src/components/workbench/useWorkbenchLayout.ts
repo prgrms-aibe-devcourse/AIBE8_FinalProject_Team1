@@ -61,6 +61,11 @@ export function useWorkbenchLayout() {
       if (event.code === 'KeyP') {
         event.preventDefault()
         setIsCommandPaletteOpen(true)
+        return
+      }
+      // 브라우저의 "페이지 저장" 창을 막는다. 파일 저장은 에디터의 ⌘S가 맡는다
+      if (event.code === 'KeyS') {
+        event.preventDefault()
       }
     }
 
