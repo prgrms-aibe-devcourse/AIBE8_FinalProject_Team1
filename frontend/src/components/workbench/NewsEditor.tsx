@@ -9,8 +9,6 @@ import JsonWorker from 'monaco-editor/languages/features/json/json.worker?worker
 import TypeScriptWorker from 'monaco-editor/languages/features/typescript/ts.worker?worker'
 import { createHighlighter, type ThemeRegistration } from 'shiki'
 import { bundledThemes } from 'shiki/themes'
-import '@fontsource/victor-mono/500.css'
-import '@fontsource/victor-mono/500-italic.css'
 import styles from './NewsEditor.module.css'
 
 export type CursorPosition = {
@@ -37,7 +35,7 @@ type NewsEditorProps = {
 }
 
 const THEME_NAME = 'readme-dark-modern'
-const FONT_FAMILY = '"Victor Mono", Menlo, Monaco, "Courier New", monospace'
+const FONT_FAMILY = 'Menlo, Monaco, "Courier New", monospace'
 const HIGHLIGHT_LANGUAGES = [
   'javascript',
   'typescript',
@@ -53,25 +51,25 @@ const HIGHLIGHT_LANGUAGES = [
   'yaml',
 ]
 
-// Monaco에는 jsx·tsx 언어가 따로 없어서 등록해야 Shiki가 JSX 문법으로 색을 칠한다
+// Monaco에는 jsx·tsx 언어가 따로 없어서 등록해야 Shiki가 JSX 문법으로 색을 칠한다.
+// 괄호 색 구분·자동 닫기가 되도록 괄호 규칙도 같이 넣는다
 const EXTRA_MONACO_LANGUAGES = ['jsx', 'tsx']
-
-// 키·변수 이름을 Victor Mono 기울임(필기체)으로 보여준다.
-// shikiToMonaco는 색과 기울임을 한 쌍으로 찾으므로, Dark+ 색을 같이 적는다
-const ITALIC_TOKEN_COLORS = [
-  {
-    scope: [
-      'variable',
-      'meta.definition.variable.name',
-      'meta.object-literal.key',
-    ],
-    settings: { foreground: '#9CDCFE', fontStyle: 'italic' },
-  },
-  {
-    scope: ['variable.other.constant'],
-    settings: { foreground: '#4FC1FF', fontStyle: 'italic' },
-  },
-]
+const JSX_LANGUAGE_CONFIGURATION: monaco.languages.LanguageConfiguration = {
+  comments: { lineComment: '//', blockComment: ['/*', '*/'] },
+  brackets: [
+    ['{', '}'],
+    ['[', ']'],
+    ['(', ')'],
+  ],
+  autoClosingPairs: [
+    { open: '{', close: '}' },
+    { open: '[', close: ']' },
+    { open: '(', close: ')' },
+    { open: '"', close: '"' },
+    { open: "'", close: "'" },
+    { open: '`', close: '`' },
+  ],
+}
 
 // CDN 대신 설치한 monaco-editor 패키지를 쓴다 (회사망·오프라인에서도 뜨게).
 // 언어마다 자동 완성·검사를 맡는 작업자(worker)가 따로 있다
@@ -113,14 +111,11 @@ async function setupEditor() {
     themes: [theme],
     langs: HIGHLIGHT_LANGUAGES,
   })
-  EXTRA_MONACO_LANGUAGES.forEach((id) => monaco.languages.register({ id }))
+  EXTRA_MONACO_LANGUAGES.forEach((id) => {
+    monaco.languages.register({ id })
+    monaco.languages.setLanguageConfiguration(id, JSX_LANGUAGE_CONFIGURATION)
+  })
   shikiToMonaco(highlighter, monaco)
-
-  // 글꼴이 내려받아지기 전에 Monaco가 글자 폭을 재면 커서 위치가 어긋나서 먼저 기다린다
-  await Promise.all([
-    document.fonts.load('500 14px "Victor Mono"'),
-    document.fonts.load('italic 500 14px "Victor Mono"'),
-  ])
 }
 
 // Dark Modern은 Dark+와 코드 색이 같고 화면 색만 다르므로, Dark+에 Dark Modern 에디터 색을 덮어쓴다
@@ -136,8 +131,12 @@ async function createTheme(): Promise<ThemeRegistration> {
       'editor.foreground': '#CCCCCC',
       'editorLineNumber.foreground': '#6E7681',
       'editorLineNumber.activeForeground': '#CCCCCC',
+      'editorIndentGuide.background1': '#404040',
+      'editorIndentGuide.activeBackground1': '#707070',
+      'editorBracketHighlight.foreground1': '#FFD700',
+      'editorBracketHighlight.foreground2': '#DA70D6',
+      'editorBracketHighlight.foreground3': '#179FFF',
     },
-    tokenColors: [...(darkPlus.tokenColors ?? []), ...ITALIC_TOKEN_COLORS],
   }
 }
 
@@ -154,10 +153,12 @@ function useEditorReady() {
 const EDITOR_OPTIONS: monaco.editor.IStandaloneEditorConstructionOptions = {
   automaticLayout: true,
   fontFamily: FONT_FAMILY,
-  fontWeight: '500',
-  fontSize: 14,
-  lineHeight: 22,
+  fontSize: 16,
+  lineHeight: 24,
   minimap: { enabled: true },
+  // VSCode 기본값: 괄호를 짝마다 다른 색으로, 들여쓰기 안내선 표시
+  bracketPairColorization: { enabled: true },
+  guides: { indentation: true, highlightActiveIndentation: true },
 }
 
 // Monaco Editor는 이 컴포넌트에서만 쓴다 (CLEAN_CODE.md 6. 외부 코드와의 경계)

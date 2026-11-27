@@ -1,4 +1,23 @@
+/* 왼쪽 여백에 명령 상태 아이콘이 들어간다 (VSCode 터미널과 같은 배치) */
 .terminal {
   width: 100%;
   height: 100%;
+  padding-left: 20px;
+  box-sizing: border-box;
+}
+
+/* Codicon 기본 스타일보다 우선하도록 선택자를 구체적으로 쓴다 */
+.decoration:global(.codicon[class*='codicon-']) {
+  margin-left: -18px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.incomplete,
+.success {
+  color: #8b8b8b;
+}
+
+.error {
+  color: #f14c4c;
 }
