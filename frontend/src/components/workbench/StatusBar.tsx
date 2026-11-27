@@ -1,3 +1,4 @@
+import { getFileType } from './fileTypes'
 import type { CursorPosition } from './NewsEditor'
 import { WELCOME_TAB_ID } from './useEditorTabs'
 import styles from './StatusBar.module.css'
@@ -8,7 +9,7 @@ type StatusBarProps = {
 }
 
 const BRANCH_NAME = 'main'
-const FILE_INFO_ITEMS = ['Spaces: 2', 'UTF-8', 'LF', '{ } TypeScript']
+const FILE_INFO_ITEMS = ['Spaces: 2', 'UTF-8', 'LF']
 
 export function StatusBar({ activeTabId, cursorPosition }: StatusBarProps) {
   const isFileOpen = activeTabId !== undefined && activeTabId !== WELCOME_TAB_ID
@@ -39,6 +40,10 @@ export function StatusBar({ activeTabId, cursorPosition }: StatusBarProps) {
                 {info}
               </span>
             ))}
+            <span className={styles.item}>
+              {'{ } '}
+              {getFileType(activeTabId).languageLabel}
+            </span>
           </>
         )}
         <span className={styles.item}>

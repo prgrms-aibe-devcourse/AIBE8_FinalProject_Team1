@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { sampleNewsCategories } from '../../news/sampleNews'
 import { IconButton } from './IconButton'
+import { FileIcon } from './FileIcon'
 import styles from './ExplorerView.module.css'
 
 type ExplorerViewProps = {
@@ -66,7 +67,7 @@ export function ExplorerView({ activeTabId, onOpenFile }: ExplorerViewProps) {
                   }
                   onClick={() => onOpenFile(category.fileName)}
                 >
-                  <span className={styles.fileIcon}>TS</span>
+                  <FileIcon fileName={category.fileName} />
                   {category.fileName}
                 </button>
               ))}

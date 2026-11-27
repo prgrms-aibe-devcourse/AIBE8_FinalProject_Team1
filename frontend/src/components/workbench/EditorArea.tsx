@@ -1,5 +1,10 @@
 import { sampleNewsCategories } from '../../news/sampleNews'
-import { toNewsFileContent } from '../../news/toNewsFileContent'
+import {
+  ARTICLES_VARIABLE_NAME,
+  toNewsFileContent,
+} from '../../news/toNewsFileContent'
+import { FileIcon } from './FileIcon'
+import { getFileType } from './fileTypes'
 import { NewsEditor, type CursorPosition } from './NewsEditor'
 import type { AgentTab } from './SecondarySideBar'
 import { EditorTabs } from './EditorTabs'
@@ -52,12 +57,18 @@ export function EditorArea({
           <div className={styles.breadcrumbs}>
             <span>{FOLDER_NAME}</span>
             <i className="codicon codicon-chevron-right" />
-            <span className={styles.fileIcon}>TS</span>
+            <FileIcon fileName={activeCategory.fileName} />
             <span>{activeCategory.fileName}</span>
+            <i className="codicon codicon-chevron-right" />
+            <i
+              className={`codicon codicon-symbol-variable ${styles.symbolIcon}`}
+            />
+            <span>{ARTICLES_VARIABLE_NAME}</span>
           </div>
           <div className={styles.editor}>
             <NewsEditor
               fileName={activeCategory.fileName}
+              languageId={getFileType(activeCategory.fileName).languageId}
               content={toNewsFileContent(activeCategory)}
               onCursorChange={onCursorChange}
             />
