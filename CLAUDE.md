@@ -22,11 +22,11 @@
 - 확인하지 못한 부분은 그대로 밝힌다.
 
 ## 같은 지적을 다시 받았을 때
-- 이 문서에 문장을 추가하기보다 ESLint·Checkstyle·ArchUnit 규칙이나
+- 이 문서에 문장을 추가하기보다 oxlint·Checkstyle·ArchUnit 규칙이나
   테스트로 자동 차단할 방법을 먼저 제안한다.
 
 ## 명령어
-- 프론트 (`frontend/`): npm run dev / npm run lint / npm run typecheck / npm run build
+- 프론트 (`frontend/`): npm run dev / npm run lint / npm run typecheck / npm run build / npm run format
 - 백엔드 (`backend/`): ./gradlew check / ./gradlew test / ./gradlew bootRun
 
 ## 구조
