@@ -1,0 +1,25 @@
+# 비밀 정보
+.env
+.env.*
+!.env.example
+application-secret.properties
+
+# Node (frontend, desktop)
+node_modules/
+dist/
+dist-electron/
+release/
+
+# Gradle (backend)
+.gradle/
+build/
+out/
+
+# IDE, OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# 로그
+*.log
