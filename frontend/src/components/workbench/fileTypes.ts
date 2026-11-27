@@ -7,24 +7,45 @@ export type FileType = {
   iconColor: string
 }
 
+const JAVASCRIPT: FileType = {
+  languageId: 'javascript',
+  languageLabel: 'JavaScript',
+  iconText: 'JS',
+  iconColor: '#cbcb41',
+}
+
 const FILE_TYPES: Record<string, FileType> = {
-  mjs: {
-    languageId: 'javascript',
-    languageLabel: 'JavaScript',
-    iconText: 'JS',
-    iconColor: '#cbcb41',
-  },
-  js: {
-    languageId: 'javascript',
-    languageLabel: 'JavaScript',
-    iconText: 'JS',
-    iconColor: '#cbcb41',
-  },
+  mjs: JAVASCRIPT,
+  js: JAVASCRIPT,
   ts: {
     languageId: 'typescript',
     languageLabel: 'TypeScript',
     iconText: 'TS',
     iconColor: '#519aba',
+  },
+  json: {
+    languageId: 'json',
+    languageLabel: 'JSON',
+    iconText: '{}',
+    iconColor: '#cbcb41',
+  },
+  md: {
+    languageId: 'markdown',
+    languageLabel: 'Markdown',
+    iconText: 'M↓',
+    iconColor: '#519aba',
+  },
+  css: {
+    languageId: 'css',
+    languageLabel: 'CSS',
+    iconText: '#',
+    iconColor: '#519aba',
+  },
+  html: {
+    languageId: 'html',
+    languageLabel: 'HTML',
+    iconText: '<>',
+    iconColor: '#e37933',
   },
 }
 

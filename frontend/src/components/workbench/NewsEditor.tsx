@@ -3,6 +3,9 @@ import Editor, { loader, type OnMount } from '@monaco-editor/react'
 import { shikiToMonaco } from '@shikijs/monaco'
 import * as monaco from 'monaco-editor'
 import EditorWorker from 'monaco-editor/editor/editor.worker?worker'
+import CssWorker from 'monaco-editor/languages/features/css/css.worker?worker'
+import HtmlWorker from 'monaco-editor/languages/features/html/html.worker?worker'
+import JsonWorker from 'monaco-editor/languages/features/json/json.worker?worker'
 import TypeScriptWorker from 'monaco-editor/languages/features/typescript/ts.worker?worker'
 import { createHighlighter, type ThemeRegistration } from 'shiki'
 import { bundledThemes } from 'shiki/themes'
@@ -15,15 +18,23 @@ export type CursorPosition = {
 }
 
 type NewsEditorProps = {
-  fileName: string
+  path: string
   languageId: string
   content: string
+  isReadOnly: boolean
   onCursorChange: (position: CursorPosition) => void
 }
 
 const THEME_NAME = 'readme-dark-modern'
 const FONT_FAMILY = '"Victor Mono", Menlo, Monaco, "Courier New", monospace'
-const HIGHLIGHT_LANGUAGES = ['javascript', 'typescript']
+const HIGHLIGHT_LANGUAGES = [
+  'javascript',
+  'typescript',
+  'json',
+  'markdown',
+  'css',
+  'html',
+]
 
 // 키·변수 이름을 Victor Mono 기울임(필기체)으로 보여준다.
 // shikiToMonaco는 색과 기울임을 한 쌍으로 찾으므로, Dark+ 색을 같이 적는다
@@ -42,11 +53,21 @@ const ITALIC_TOKEN_COLORS = [
   },
 ]
 
-// CDN 대신 설치한 monaco-editor 패키지를 쓴다 (회사망·오프라인에서도 뜨게)
+// CDN 대신 설치한 monaco-editor 패키지를 쓴다 (회사망·오프라인에서도 뜨게).
+// 언어마다 자동 완성·검사를 맡는 작업자(worker)가 따로 있다
 self.MonacoEnvironment = {
   getWorker(_workerId, label) {
     if (label === 'typescript' || label === 'javascript') {
       return new TypeScriptWorker()
+    }
+    if (label === 'json') {
+      return new JsonWorker()
+    }
+    if (label === 'css') {
+      return new CssWorker()
+    }
+    if (label === 'html') {
+      return new HtmlWorker()
     }
     return new EditorWorker()
   },
@@ -110,7 +131,6 @@ function useEditorReady() {
 }
 
 const EDITOR_OPTIONS: monaco.editor.IStandaloneEditorConstructionOptions = {
-  readOnly: true,
   automaticLayout: true,
   fontFamily: FONT_FAMILY,
   fontWeight: '500',
@@ -121,9 +141,10 @@ const EDITOR_OPTIONS: monaco.editor.IStandaloneEditorConstructionOptions = {
 
 // Monaco Editor는 이 컴포넌트에서만 쓴다 (CLEAN_CODE.md 6. 외부 코드와의 경계)
 export function NewsEditor({
-  fileName,
+  path,
   languageId,
   content,
+  isReadOnly,
   onCursorChange,
 }: NewsEditorProps) {
   const isEditorReady = useEditorReady()
@@ -144,10 +165,10 @@ export function NewsEditor({
   return (
     <Editor
       theme={THEME_NAME}
-      path={fileName}
+      path={path}
       defaultLanguage={languageId}
       defaultValue={content}
-      options={EDITOR_OPTIONS}
+      options={{ ...EDITOR_OPTIONS, readOnly: isReadOnly }}
       onMount={handleMount}
     />
   )

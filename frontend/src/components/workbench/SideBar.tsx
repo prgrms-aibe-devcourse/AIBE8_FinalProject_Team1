@@ -1,12 +1,11 @@
-import { ExplorerView } from './ExplorerView'
 import { PlaceholderView, type PlaceholderViewContent } from './PlaceholderView'
+import type { ReactNode } from 'react'
 import type { SideBarView } from './useWorkbenchLayout'
 import styles from './SideBar.module.css'
 
 type SideBarProps = {
   activeView: SideBarView
-  activeTabId: string | undefined
-  onOpenFile: (fileName: string) => void
+  explorer: ReactNode
 }
 
 const VIEW_TITLES: Record<SideBarView, string> = {
@@ -34,7 +33,7 @@ const PLACEHOLDER_CONTENTS: Record<
   extensions: { inputPlaceholder: 'Search Extensions in Marketplace' },
 }
 
-export function SideBar({ activeView, activeTabId, onOpenFile }: SideBarProps) {
+export function SideBar({ activeView, explorer }: SideBarProps) {
   return (
     <aside className={styles.sideBar}>
       <div className={styles.title}>
@@ -42,7 +41,7 @@ export function SideBar({ activeView, activeTabId, onOpenFile }: SideBarProps) {
         <i className="codicon codicon-ellipsis" />
       </div>
       {activeView === 'explorer' ? (
-        <ExplorerView activeTabId={activeTabId} onOpenFile={onOpenFile} />
+        explorer
       ) : (
         <PlaceholderView content={PLACEHOLDER_CONTENTS[activeView]} />
       )}

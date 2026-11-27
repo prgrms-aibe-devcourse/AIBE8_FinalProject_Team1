@@ -1,5 +1,6 @@
 import { IconButton } from './IconButton'
 import { FileIcon } from './FileIcon'
+import { getNodeName } from './useExplorerTree'
 import type { AgentTab } from './SecondarySideBar'
 import { WELCOME_TAB_ID } from './useEditorTabs'
 import styles from './EditorTabs.module.css'
@@ -76,8 +77,8 @@ function TabLabel({ tabId }: { tabId: string }) {
   }
   return (
     <span className={styles.label}>
-      <FileIcon fileName={tabId} />
-      {tabId}
+      <FileIcon fileName={getNodeName(tabId)} />
+      {getNodeName(tabId)}
     </span>
   )
 }

@@ -51,3 +51,9 @@
 .symbolIcon {
   color: #75beff;
 }
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
