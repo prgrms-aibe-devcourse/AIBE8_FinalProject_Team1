@@ -8,10 +8,12 @@ import { SecondarySideBar, type AgentTab } from './SecondarySideBar'
 import { SideBar } from './SideBar'
 import { StatusBar } from './StatusBar'
 import { TitleBar } from './TitleBar'
+import { useDirtyFiles } from './useDirtyFiles'
 import { useEditorTabs } from './useEditorTabs'
 import { useExplorerTree, type ExplorerNodeKind } from './useExplorerTree'
 import { useWorkbenchLayout } from './useWorkbenchLayout'
 import type { CursorPosition, SearchReveal } from './NewsEditor'
+import { moveFileContents, restoreFileContent } from './editorModels'
 import type { NewsLineMatch } from '../../news/searchNews'
 import styles from './Workbench.module.css'
 
@@ -22,6 +24,7 @@ export function Workbench() {
   const layout = useWorkbenchLayout()
   const editorTabs = useEditorTabs()
   const explorerTree = useExplorerTree()
+  const dirtyFiles = useDirtyFiles()
   const [cursorPosition, setCursorPosition] = useState(START_CURSOR_POSITION)
   const [agentTab, setAgentTab] = useState<AgentTab>('codex')
   const [searchReveal, setSearchReveal] = useState<SearchReveal>()
@@ -66,13 +69,25 @@ export function Workbench() {
     const newPath = explorerTree.renameNode(path, newName)
     if (newPath !== undefined) {
       editorTabs.renameTabsOf(path, newPath)
+      dirtyFiles.renameFiles(path, newPath)
+      moveFileContents(path, newPath)
     }
   }
 
   const deleteExplorerNode = (path: string) => {
     if (explorerTree.deleteNode(path)) {
       editorTabs.closeTabsOf(path)
+      dirtyFiles.forgetFiles(path)
     }
+  }
+
+  // VSCode는 저장 안 한 탭을 닫을 때 물어보지만, 여기서는 고친 내용을 버리고 닫는다
+  const closeEditorTab = (tabId: string) => {
+    if (dirtyFiles.dirtyPaths.has(tabId)) {
+      restoreFileContent(tabId, dirtyFiles.getSavedContent(tabId))
+      dirtyFiles.discardChanges(tabId)
+    }
+    editorTabs.closeTab(tabId)
   }
 
   return (
@@ -90,6 +105,7 @@ export function Workbench() {
         <ActivityBar
           activeView={layout.isSideBarVisible ? layout.activeView : undefined}
           onSelectView={layout.selectView}
+          dirtyFileCount={dirtyFiles.dirtyPaths.size}
           onOpenClaudeCode={() => openAgent('claude-code')}
         />
         {layout.isSideBarVisible && (
@@ -113,9 +129,12 @@ export function Workbench() {
             activeTabId={editorTabs.activeTabId}
             onOpenFile={editorTabs.openTab}
             onSelectTab={editorTabs.selectTab}
-            onCloseTab={editorTabs.closeTab}
+            onCloseTab={closeEditorTab}
+            dirtyPaths={dirtyFiles.dirtyPaths}
             searchReveal={searchReveal}
             onCursorChange={setCursorPosition}
+            onContentChange={dirtyFiles.changeContent}
+            onSave={dirtyFiles.saveFile}
             onRun={layout.showPanel}
             onOpenAgent={openAgent}
           />

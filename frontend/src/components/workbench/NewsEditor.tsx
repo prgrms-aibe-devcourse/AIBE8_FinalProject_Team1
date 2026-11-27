@@ -32,6 +32,8 @@ type NewsEditorProps = {
   isReadOnly: boolean
   searchReveal: SearchReveal | undefined
   onCursorChange: (position: CursorPosition) => void
+  onContentChange: (path: string, content: string) => void
+  onSave: (path: string, content: string) => void
 }
 
 const THEME_NAME = 'readme-dark-modern'
@@ -161,7 +163,7 @@ const EDITOR_OPTIONS: monaco.editor.IStandaloneEditorConstructionOptions = {
   guides: { indentation: true, highlightActiveIndentation: true },
 }
 
-// Monaco Editor는 이 컴포넌트에서만 쓴다 (CLEAN_CODE.md 6. 외부 코드와의 경계)
+// Monaco Editor는 이 컴포넌트와 editorModels.ts에서만 쓴다 (CLEAN_CODE.md 6. 외부 코드와의 경계)
 export function NewsEditor({
   path,
   languageId,
@@ -169,8 +171,15 @@ export function NewsEditor({
   isReadOnly,
   searchReveal,
   onCursorChange,
+  onContentChange,
+  onSave,
 }: NewsEditorProps) {
   const isEditorReady = useEditorReady()
+  // Monaco 이벤트는 처음 띄울 때 한 번만 등록하므로, 탭을 바꿔도 지금 경로와 콜백을 쓰도록 ref에 둔다
+  const latestRef = useRef({ path, onContentChange, onSave })
+  useEffect(() => {
+    latestRef.current = { path, onContentChange, onSave }
+  })
   const [editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor>()
   const lineHighlightRef =
     useRef<monaco.editor.IEditorDecorationsCollection>(undefined)
@@ -208,8 +217,28 @@ export function NewsEditor({
     editor.trigger('command-palette', 'actions.findWithSelection', null)
   }, [editor, path, searchReveal])
 
+  // 이름을 바꿔 확장자가 달라지면 문법 색도 새 언어로 바꾼다
+  useEffect(() => {
+    const model = editor?.getModel()
+    if (model && model.getLanguageId() !== languageId) {
+      monaco.editor.setModelLanguage(model, languageId)
+    }
+  }, [editor, path, languageId])
+
   const handleMount: OnMount = (mountedEditor) => {
     setEditor(mountedEditor)
+    mountedEditor.onDidChangeModelContent(() => {
+      const latest = latestRef.current
+      latest.onContentChange(latest.path, mountedEditor.getValue())
+    })
+    // ⌘S(윈도우는 Ctrl+S)로 저장
+    mountedEditor.addCommand(
+      monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
+      () => {
+        const latest = latestRef.current
+        latest.onSave(latest.path, mountedEditor.getValue())
+      },
+    )
     mountedEditor.onDidChangeCursorPosition((event) => {
       onCursorChange({
         lineNumber: event.position.lineNumber,
@@ -229,6 +258,8 @@ export function NewsEditor({
       defaultLanguage={languageId}
       defaultValue={content}
       options={{ ...EDITOR_OPTIONS, readOnly: isReadOnly }}
+      // 탭을 모두 닫아 에디터가 사라져도 파일 내용(모델)을 지우지 않는다
+      keepCurrentModel
       onMount={handleMount}
     />
   )

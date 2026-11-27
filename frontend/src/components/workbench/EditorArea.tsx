@@ -22,8 +22,11 @@ type EditorAreaProps = {
   onOpenFile: (path: string) => void
   onSelectTab: (tabId: string) => void
   onCloseTab: (tabId: string) => void
+  dirtyPaths: Set<string>
   searchReveal: SearchReveal | undefined
   onCursorChange: (position: CursorPosition) => void
+  onContentChange: (path: string, content: string) => void
+  onSave: (path: string, content: string) => void
   onRun: () => void
   onOpenAgent: (tab: AgentTab) => void
 }
@@ -34,8 +37,11 @@ export function EditorArea({
   onOpenFile,
   onSelectTab,
   onCloseTab,
+  dirtyPaths,
   searchReveal,
   onCursorChange,
+  onContentChange,
+  onSave,
   onRun,
   onOpenAgent,
 }: EditorAreaProps) {
@@ -46,6 +52,7 @@ export function EditorArea({
       <EditorTabs
         openTabIds={openTabIds}
         activeTabId={activeTabId}
+        dirtyPaths={dirtyPaths}
         onSelectTab={onSelectTab}
         onCloseTab={onCloseTab}
         onRun={onRun}
@@ -59,6 +66,8 @@ export function EditorArea({
           path={activeTabId}
           searchReveal={searchReveal}
           onCursorChange={onCursorChange}
+          onContentChange={onContentChange}
+          onSave={onSave}
         />
       )}
       {activeTabId === undefined && <EmptyEditor />}
@@ -70,10 +79,18 @@ type FileEditorProps = {
   path: string
   searchReveal: SearchReveal | undefined
   onCursorChange: (position: CursorPosition) => void
+  onContentChange: (path: string, content: string) => void
+  onSave: (path: string, content: string) => void
 }
 
 // 뉴스 파일은 기사를 읽기 전용으로, 탐색기에서 만든 파일은 빈 파일로 열어 입력할 수 있다
-function FileEditor({ path, searchReveal, onCursorChange }: FileEditorProps) {
+function FileEditor({
+  path,
+  searchReveal,
+  onCursorChange,
+  onContentChange,
+  onSave,
+}: FileEditorProps) {
   const newsCategory = findNewsCategory(path)
   const pathSegments = path.split('/')
   const fileName = pathSegments[pathSegments.length - 1]
@@ -107,6 +124,8 @@ function FileEditor({ path, searchReveal, onCursorChange }: FileEditorProps) {
           isReadOnly={newsCategory !== undefined}
           searchReveal={searchReveal}
           onCursorChange={onCursorChange}
+          onContentChange={onContentChange}
+          onSave={onSave}
         />
       </div>
     </>

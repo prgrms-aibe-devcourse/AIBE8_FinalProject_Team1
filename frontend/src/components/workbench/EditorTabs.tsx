@@ -11,6 +11,7 @@ import styles from './EditorTabs.module.css'
 type EditorTabsProps = {
   openTabIds: string[]
   activeTabId: string | undefined
+  dirtyPaths: Set<string>
   onSelectTab: (tabId: string) => void
   onCloseTab: (tabId: string) => void
   onRun: () => void
@@ -20,6 +21,7 @@ type EditorTabsProps = {
 export function EditorTabs({
   openTabIds,
   activeTabId,
+  dirtyPaths,
   onSelectTab,
   onCloseTab,
   onRun,
@@ -37,14 +39,24 @@ export function EditorTabs({
             <TabLabel tabId={tabId} />
             <button
               type="button"
-              className={styles.closeButton}
+              className={
+                dirtyPaths.has(tabId)
+                  ? styles.dirtyCloseButton
+                  : styles.closeButton
+              }
               aria-label={`Close ${tabId}`}
               onClick={(event) => {
                 event.stopPropagation()
                 onCloseTab(tabId)
               }}
             >
-              <i className="codicon codicon-close" />
+              {/* 저장 안 한 파일은 ●, 가리키면 VSCode처럼 X로 바뀐다 */}
+              {dirtyPaths.has(tabId) && (
+                <i
+                  className={`codicon codicon-circle-filled ${styles.dirtyIcon}`}
+                />
+              )}
+              <i className={`codicon codicon-close ${styles.closeIcon}`} />
             </button>
           </div>
         ))}

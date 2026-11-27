@@ -6,6 +6,7 @@ import styles from './ActivityBar.module.css'
 type ActivityBarProps = {
   activeView: SideBarView | undefined
   onSelectView: (view: SideBarView) => void
+  dirtyFileCount: number
   onOpenClaudeCode: () => void
 }
 
@@ -13,11 +14,10 @@ type ViewItem = {
   view: SideBarView
   icon: string
   label: string
-  badgeCount?: number
 }
 
 const MAIN_VIEW_ITEMS: ViewItem[] = [
-  { view: 'explorer', icon: 'files', label: 'Explorer (⇧⌘E)', badgeCount: 1 },
+  { view: 'explorer', icon: 'files', label: 'Explorer (⇧⌘E)' },
   { view: 'search', icon: 'search', label: 'Search (⇧⌘F)' },
   {
     view: 'source-control',
@@ -25,12 +25,7 @@ const MAIN_VIEW_ITEMS: ViewItem[] = [
     label: 'Source Control (⌃⇧G)',
   },
   { view: 'run-debug', icon: 'debug-alt', label: 'Run and Debug (⇧⌘D)' },
-  {
-    view: 'extensions',
-    icon: 'extensions',
-    label: 'Extensions (⇧⌘X)',
-    badgeCount: 1,
-  },
+  { view: 'extensions', icon: 'extensions', label: 'Extensions (⇧⌘X)' },
 ]
 
 const CONTAINERS_ITEM: ViewItem = {
@@ -42,14 +37,23 @@ const CONTAINERS_ITEM: ViewItem = {
 export function ActivityBar({
   activeView,
   onSelectView,
+  dirtyFileCount,
   onOpenClaudeCode,
 }: ActivityBarProps) {
+  // VSCode의 DirtyFilesIndicator처럼 저장 안 한 파일이 있을 때만 탐색기에 숫자를 띄운다
+  const toBadge = (view: SideBarView) =>
+    view === 'explorer' && dirtyFileCount > 0 ? dirtyFileCount : undefined
+  const toLabel = (item: ViewItem) =>
+    toBadge(item.view) === undefined
+      ? item.label
+      : `${item.label} - ${dirtyFileCount} unsaved file${dirtyFileCount > 1 ? 's' : ''}`
+
   const renderViewItem = (item: ViewItem) => (
     <ActivityItem
       key={item.view}
-      label={item.label}
+      label={toLabel(item)}
       isActive={item.view === activeView}
-      badgeCount={item.badgeCount}
+      badgeCount={toBadge(item.view)}
       onClick={() => onSelectView(item.view)}
     >
       <i className={`codicon codicon-${item.icon}`} />
@@ -75,7 +79,7 @@ export function ActivityBar({
         <ActivityItem label="Accounts" isActive={false}>
           <i className="codicon codicon-account" />
         </ActivityItem>
-        <ActivityItem label="Manage" isActive={false} badgeCount={1}>
+        <ActivityItem label="Manage" isActive={false}>
           <i className="codicon codicon-settings-gear" />
         </ActivityItem>
       </div>
