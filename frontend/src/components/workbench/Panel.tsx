@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { IconButton } from './IconButton'
+import { NewsTerminal } from './NewsTerminal'
 import styles from './Panel.module.css'
 
 type PanelProps = {
@@ -29,9 +30,7 @@ const PANEL_TABS: { tab: PanelTab; label: string; emptyMessage: string }[] = [
   },
 ]
 
-const TERMINAL_PROMPT = 'dev@readme news % '
-
-// 터미널은 자리만 만든다. 명령어 입력은 xterm.js 이슈에서 붙인다
+// 다른 탭을 보고 와도 터미널 내용이 남도록, 터미널은 숨기기만 하고 계속 띄워 둔다
 export function Panel({ onClose }: PanelProps) {
   const [activeTab, setActiveTab] = useState<PanelTab>('terminal')
   const activeTabInfo = PANEL_TABS.find(
@@ -74,12 +73,10 @@ export function Panel({ onClose }: PanelProps) {
       </div>
 
       <div className={styles.body}>
-        {activeTab === 'terminal' ? (
-          <div className={styles.terminal}>
-            {TERMINAL_PROMPT}
-            <span className={styles.cursor} />
-          </div>
-        ) : (
+        <div className={styles.terminal} hidden={activeTab !== 'terminal'}>
+          <NewsTerminal />
+        </div>
+        {activeTab !== 'terminal' && (
           <p className={styles.emptyMessage}>{activeTabInfo?.emptyMessage}</p>
         )}
       </div>
