@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react'
 
 export type SideBarView =
-  'explorer' | 'search' | 'source-control' | 'run-debug' | 'extensions'
+  | 'explorer'
+  | 'search'
+  | 'source-control'
+  | 'run-debug'
+  | 'extensions'
+  | 'containers'
 
 // 사이드바·패널·보조 사이드바를 열고 닫는 상태와 VSCode 단축키
 export function useWorkbenchLayout() {

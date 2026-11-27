@@ -38,6 +38,6 @@
   cursor: pointer;
 }
 
-.commandCenter :global(.codicon) {
+.commandCenter :global(.codicon[class*='codicon-']) {
   font-size: 14px;
 }

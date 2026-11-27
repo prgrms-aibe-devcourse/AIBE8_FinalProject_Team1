@@ -21,6 +21,8 @@
   --vscode-activityBar-foreground: #c8c8c8;
   --vscode-activityBar-inactiveForeground: #7a7a7a;
   --vscode-activityBar-activeBorder: #0078d4;
+  --vscode-activityBarBadge-background: #0078d4;
+  --vscode-activityBarBadge-foreground: #ffffff;
 
   --vscode-sideBar-background: #181818;
   --vscode-sideBar-border: #2b2b2b;
