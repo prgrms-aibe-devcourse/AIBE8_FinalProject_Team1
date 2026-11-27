@@ -5,7 +5,11 @@ import {
 } from '../../news/toNewsFileContent'
 import { FileIcon } from './FileIcon'
 import { getFileType } from './fileTypes'
-import { NewsEditor, type CursorPosition } from './NewsEditor'
+import {
+  NewsEditor,
+  type CursorPosition,
+  type SearchReveal,
+} from './NewsEditor'
 import type { AgentTab } from './SecondarySideBar'
 import { EditorTabs } from './EditorTabs'
 import { WELCOME_TAB_ID } from './useEditorTabs'
@@ -18,6 +22,7 @@ type EditorAreaProps = {
   onOpenFile: (path: string) => void
   onSelectTab: (tabId: string) => void
   onCloseTab: (tabId: string) => void
+  searchReveal: SearchReveal | undefined
   onCursorChange: (position: CursorPosition) => void
   onRun: () => void
   onOpenAgent: (tab: AgentTab) => void
@@ -29,6 +34,7 @@ export function EditorArea({
   onOpenFile,
   onSelectTab,
   onCloseTab,
+  searchReveal,
   onCursorChange,
   onRun,
   onOpenAgent,
@@ -49,7 +55,11 @@ export function EditorArea({
         <WelcomePage onOpenFile={onOpenFile} />
       )}
       {isFileOpen && (
-        <FileEditor path={activeTabId} onCursorChange={onCursorChange} />
+        <FileEditor
+          path={activeTabId}
+          searchReveal={searchReveal}
+          onCursorChange={onCursorChange}
+        />
       )}
       {activeTabId === undefined && <EmptyEditor />}
     </section>
@@ -58,11 +68,12 @@ export function EditorArea({
 
 type FileEditorProps = {
   path: string
+  searchReveal: SearchReveal | undefined
   onCursorChange: (position: CursorPosition) => void
 }
 
 // 뉴스 파일은 기사를 읽기 전용으로, 탐색기에서 만든 파일은 빈 파일로 열어 입력할 수 있다
-function FileEditor({ path, onCursorChange }: FileEditorProps) {
+function FileEditor({ path, searchReveal, onCursorChange }: FileEditorProps) {
   const newsCategory = findNewsCategory(path)
   const pathSegments = path.split('/')
   const fileName = pathSegments[pathSegments.length - 1]
@@ -94,6 +105,7 @@ function FileEditor({ path, onCursorChange }: FileEditorProps) {
           languageId={getFileType(fileName).languageId}
           content={newsCategory ? toNewsFileContent(newsCategory) : ''}
           isReadOnly={newsCategory !== undefined}
+          searchReveal={searchReveal}
           onCursorChange={onCursorChange}
         />
       </div>

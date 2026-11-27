@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ActivityBar } from './ActivityBar'
+import { CommandPalette } from './CommandPalette'
 import { EditorArea } from './EditorArea'
 import { ExplorerView } from './ExplorerView'
 import { Panel } from './Panel'
@@ -10,7 +11,8 @@ import { TitleBar } from './TitleBar'
 import { useEditorTabs } from './useEditorTabs'
 import { useExplorerTree, type ExplorerNodeKind } from './useExplorerTree'
 import { useWorkbenchLayout } from './useWorkbenchLayout'
-import type { CursorPosition } from './NewsEditor'
+import type { CursorPosition, SearchReveal } from './NewsEditor'
+import type { NewsLineMatch } from '../../news/searchNews'
 import styles from './Workbench.module.css'
 
 const START_CURSOR_POSITION: CursorPosition = { lineNumber: 1, column: 1 }
@@ -22,11 +24,30 @@ export function Workbench() {
   const explorerTree = useExplorerTree()
   const [cursorPosition, setCursorPosition] = useState(START_CURSOR_POSITION)
   const [agentTab, setAgentTab] = useState<AgentTab>('codex')
+  const [searchReveal, setSearchReveal] = useState<SearchReveal>()
 
   // 에디터의 Codex·Claude Code 버튼을 누르면 AI agent 창을 열고 그 탭을 보여준다
   const openAgent = (tab: AgentTab) => {
     setAgentTab(tab)
     layout.showSecondarySideBar()
+  }
+
+  const openFileFromPalette = (path: string) => {
+    editorTabs.openTab(path)
+    layout.closeCommandPalette()
+  }
+
+  // Command Palette에서 고른 줄이 있는 파일을 열고, 에디터가 그 줄로 이동하게 한다
+  const revealSearchMatch = (match: NewsLineMatch, keyword: string) => {
+    editorTabs.openTab(match.path)
+    setSearchReveal({
+      requestId: Date.now(),
+      path: match.path,
+      lineNumber: match.lineNumber,
+      column: match.column,
+      keyword,
+    })
+    layout.closeCommandPalette()
   }
 
   // 탐색기에서 파일을 만들거나 바꾸거나 지우면 열린 탭도 맞춰 준다
@@ -63,6 +84,7 @@ export function Workbench() {
         onToggleSideBar={layout.toggleSideBar}
         onTogglePanel={layout.togglePanel}
         onToggleSecondarySideBar={layout.toggleSecondarySideBar}
+        onOpenCommandPalette={layout.openCommandPalette}
       />
       <div className={styles.main}>
         <ActivityBar
@@ -92,6 +114,7 @@ export function Workbench() {
             onOpenFile={editorTabs.openTab}
             onSelectTab={editorTabs.selectTab}
             onCloseTab={editorTabs.closeTab}
+            searchReveal={searchReveal}
             onCursorChange={setCursorPosition}
             onRun={layout.showPanel}
             onOpenAgent={openAgent}
@@ -106,6 +129,13 @@ export function Workbench() {
           />
         )}
       </div>
+      {layout.isCommandPaletteOpen && (
+        <CommandPalette
+          onOpenFile={openFileFromPalette}
+          onSelectMatch={revealSearchMatch}
+          onClose={layout.closeCommandPalette}
+        />
+      )}
       <StatusBar
         activeTabId={editorTabs.activeTabId}
         cursorPosition={cursorPosition}

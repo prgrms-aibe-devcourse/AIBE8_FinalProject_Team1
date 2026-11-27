@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Editor, { loader, type OnMount } from '@monaco-editor/react'
 import { shikiToMonaco } from '@shikijs/monaco'
 import * as monaco from 'monaco-editor'
@@ -11,10 +11,20 @@ import { createHighlighter, type ThemeRegistration } from 'shiki'
 import { bundledThemes } from 'shiki/themes'
 import '@fontsource/victor-mono/500.css'
 import '@fontsource/victor-mono/500-italic.css'
+import styles from './NewsEditor.module.css'
 
 export type CursorPosition = {
   lineNumber: number
   column: number
+}
+
+// Command Palette에서 고른 검색 결과. requestId가 바뀔 때마다 그 줄로 이동한다
+export type SearchReveal = {
+  requestId: number
+  path: string
+  lineNumber: number
+  column: number
+  keyword: string
 }
 
 type NewsEditorProps = {
@@ -22,6 +32,7 @@ type NewsEditorProps = {
   languageId: string
   content: string
   isReadOnly: boolean
+  searchReveal: SearchReveal | undefined
   onCursorChange: (position: CursorPosition) => void
 }
 
@@ -155,12 +166,50 @@ export function NewsEditor({
   languageId,
   content,
   isReadOnly,
+  searchReveal,
   onCursorChange,
 }: NewsEditorProps) {
   const isEditorReady = useEditorReady()
+  const [editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor>()
+  const lineHighlightRef =
+    useRef<monaco.editor.IEditorDecorationsCollection>(undefined)
+  // 다른 탭을 보고 돌아왔을 때 같은 검색 결과로 다시 이동하지 않게 한다
+  const handledRequestIdRef = useRef<number>(undefined)
 
-  const handleMount: OnMount = (editor) => {
-    editor.onDidChangeCursorPosition((event) => {
+  // 검색한 줄로 이동해 줄 전체를 강조하고, 찾기 창(⌘F)에 키워드를 넣어 다음 일치로 이동할 수 있게 한다
+  useEffect(() => {
+    if (
+      editor === undefined ||
+      searchReveal?.path !== path ||
+      searchReveal.requestId === handledRequestIdRef.current
+    ) {
+      return
+    }
+    handledRequestIdRef.current = searchReveal.requestId
+    const { lineNumber, column, keyword } = searchReveal
+    const keywordRange = new monaco.Range(
+      lineNumber,
+      column,
+      lineNumber,
+      column + keyword.length,
+    )
+
+    lineHighlightRef.current?.clear()
+    lineHighlightRef.current = editor.createDecorationsCollection([
+      {
+        range: keywordRange,
+        options: { isWholeLine: true, className: styles.searchLine },
+      },
+    ])
+    editor.revealLineInCenter(lineNumber)
+    editor.setSelection(keywordRange)
+    editor.focus()
+    editor.trigger('command-palette', 'actions.findWithSelection', null)
+  }, [editor, path, searchReveal])
+
+  const handleMount: OnMount = (mountedEditor) => {
+    setEditor(mountedEditor)
+    mountedEditor.onDidChangeCursorPosition((event) => {
       onCursorChange({
         lineNumber: event.position.lineNumber,
         column: event.position.column,
