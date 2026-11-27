@@ -58,6 +58,9 @@
   --vscode-button-hoverBackground: #026ec1;
   --vscode-button-foreground: #ffffff;
   --vscode-toolbar-hoverBackground: #5a5d5e50;
+  --vscode-widget-border: #313131;
+  --vscode-quickInput-background: #222222;
+  --vscode-quickInputList-focusBackground: #04395e;
 
   --vscode-font-family:
     -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu',

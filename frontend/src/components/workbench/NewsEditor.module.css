@@ -1,0 +1,4 @@
+/* Command Palette에서 고른 줄 전체 강조 */
+.searchLine {
+  background: rgb(0 120 212 / 25%);
+}

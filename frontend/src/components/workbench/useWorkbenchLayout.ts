@@ -15,6 +15,7 @@ export function useWorkbenchLayout() {
   const [isPanelVisible, setIsPanelVisible] = useState(true)
   const [isSecondarySideBarVisible, setIsSecondarySideBarVisible] =
     useState(true)
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false)
 
   const toggleSideBar = () => setIsSideBarVisible((isVisible) => !isVisible)
   const togglePanel = () => setIsPanelVisible((isVisible) => !isVisible)
@@ -22,6 +23,8 @@ export function useWorkbenchLayout() {
     setIsSecondarySideBarVisible((isVisible) => !isVisible)
   const showPanel = () => setIsPanelVisible(true)
   const showSecondarySideBar = () => setIsSecondarySideBarVisible(true)
+  const openCommandPalette = () => setIsCommandPaletteOpen(true)
+  const closeCommandPalette = () => setIsCommandPaletteOpen(false)
 
   // VSCode처럼 이미 보고 있는 아이콘을 다시 누르면 사이드바를 닫는다
   const selectView = (view: SideBarView) => {
@@ -53,6 +56,11 @@ export function useWorkbenchLayout() {
       if (event.code === 'KeyJ') {
         event.preventDefault()
         setIsPanelVisible((isVisible) => !isVisible)
+        return
+      }
+      if (event.code === 'KeyP') {
+        event.preventDefault()
+        setIsCommandPaletteOpen(true)
       }
     }
 
@@ -71,5 +79,8 @@ export function useWorkbenchLayout() {
     toggleSecondarySideBar,
     showPanel,
     showSecondarySideBar,
+    isCommandPaletteOpen,
+    openCommandPalette,
+    closeCommandPalette,
   }
 }

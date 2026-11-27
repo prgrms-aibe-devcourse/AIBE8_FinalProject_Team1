@@ -8,6 +8,7 @@ type TitleBarProps = {
   onToggleSideBar: () => void
   onTogglePanel: () => void
   onToggleSecondarySideBar: () => void
+  onOpenCommandPalette: () => void
 }
 
 const WORKSPACE_NAME = 'news'
@@ -19,6 +20,7 @@ export function TitleBar({
   onToggleSideBar,
   onTogglePanel,
   onToggleSecondarySideBar,
+  onOpenCommandPalette,
 }: TitleBarProps) {
   return (
     <header className={styles.titleBar}>
@@ -29,7 +31,12 @@ export function TitleBar({
       <div className={styles.center}>
         <IconButton icon="arrow-left" label="Go Back" />
         <IconButton icon="arrow-right" label="Go Forward" />
-        <button type="button" className={styles.commandCenter}>
+        <button
+          type="button"
+          className={styles.commandCenter}
+          title="Search news (⌘P)"
+          onClick={onOpenCommandPalette}
+        >
           <i className="codicon codicon-search" />
           <span>{WORKSPACE_NAME}</span>
         </button>
