@@ -1,5 +1,7 @@
+import { Workbench } from './components/workbench/Workbench'
+
 function App() {
-  return <div className="app" />
+  return <Workbench />
 }
 
 export default App

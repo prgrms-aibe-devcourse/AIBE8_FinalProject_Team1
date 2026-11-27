@@ -1,0 +1,43 @@
+.placeholderView {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 20px;
+}
+
+.input {
+  height: 26px;
+  padding: 0 6px;
+  border: 1px solid var(--vscode-input-border);
+  border-radius: 2px;
+  outline: none;
+  background: var(--vscode-input-background);
+  color: var(--vscode-foreground);
+  font: inherit;
+}
+
+.input::placeholder {
+  color: var(--vscode-input-placeholderForeground);
+}
+
+.input:focus {
+  border-color: var(--vscode-focusBorder);
+}
+
+.message {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.button {
+  height: 28px;
+  border: none;
+  border-radius: 2px;
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--vscode-button-hoverBackground);
+}

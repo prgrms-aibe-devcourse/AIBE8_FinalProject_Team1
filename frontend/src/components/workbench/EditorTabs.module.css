@@ -1,0 +1,102 @@
+.tabBar {
+  display: flex;
+  flex-shrink: 0;
+  height: 35px;
+  border-bottom: 1px solid var(--vscode-editorGroupHeader-tabsBorder);
+  background: var(--vscode-editorGroupHeader-tabsBackground);
+}
+
+.tabs {
+  display: flex;
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.tab,
+.activeTab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  min-width: 80px;
+  padding: 0 6px 0 10px;
+  border-right: 1px solid var(--vscode-tab-border);
+  background: var(--vscode-tab-inactiveBackground);
+  color: var(--vscode-tab-inactiveForeground);
+  cursor: pointer;
+}
+
+.activeTab {
+  margin-bottom: -1px;
+  background: var(--vscode-tab-activeBackground);
+  color: var(--vscode-tab-activeForeground);
+}
+
+.activeTab::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--vscode-tab-activeBorderTop);
+  content: '';
+}
+
+.label,
+.welcomeLabel {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 6px;
+}
+
+.welcomeLabel {
+  font-style: italic;
+}
+
+.welcomeLabel :global(.codicon) {
+  color: #3794ff;
+}
+
+.fileIcon {
+  color: #519aba;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 5px;
+  background: none;
+  cursor: pointer;
+  visibility: hidden;
+}
+
+.activeTab .closeButton,
+.tab:hover .closeButton {
+  visibility: visible;
+}
+
+.closeButton:hover {
+  background: var(--vscode-toolbar-hoverBackground);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+}
+
+.claudeIcon {
+  color: #d97757;
+}
