@@ -1,9 +1,11 @@
 import { sampleNewsCategories, type NewsArticle } from './sampleNews'
 
-// 터미널 명령어 결과. 줄마다 ANSI 색 코드가 들어갈 수 있다
+// 터미널 명령어 결과. 줄마다 ANSI 색 코드가 들어갈 수 있다.
+// isError면 VSCode처럼 프롬프트 앞에 실패 표시(빨간 ⊗)를 한다
 export type CommandResult = {
   lines: string[]
   shouldClear: boolean
+  isError: boolean
 }
 
 type NumberedArticle = {
@@ -32,16 +34,16 @@ export function runNewsCommand(input: string): CommandResult {
   const argument = rest.join(' ')
 
   if (command === '') {
-    return output([])
+    return success([])
   }
   if (command === 'clear') {
-    return { lines: [], shouldClear: true }
+    return { lines: [], shouldClear: true, isError: false }
   }
   if (command === 'help') {
-    return output(HELP_LINES)
+    return success(HELP_LINES)
   }
   if (command !== 'news') {
-    return output([`zsh: command not found: ${command}`])
+    return failure(`zsh: command not found: ${command}`)
   }
   return runNewsSubcommand(subcommand, argument)
 }
@@ -51,74 +53,76 @@ function runNewsSubcommand(
   argument: string,
 ): CommandResult {
   if (subcommand === 'ls') {
-    return output(argument === '' ? listCategories() : listArticles(argument))
+    return argument === '' ? listCategories() : listArticles(argument)
   }
   if (subcommand === 'cat') {
-    return output(showArticle(argument))
+    return showArticle(argument)
   }
   if (subcommand === 'grep') {
-    return output(searchArticles(argument))
+    return searchArticles(argument)
   }
   if (subcommand === 'bookmark') {
-    return output(bookmarkArticle(argument))
+    return bookmarkArticle(argument)
   }
-  return output(HELP_LINES)
+  return success(HELP_LINES)
 }
 
-function listCategories(): string[] {
-  return sampleNewsCategories.map(
-    (category) =>
-      `${CYAN}${toCategoryName(category.fileName)}${RESET}  ${DIM}기사 ${category.articles.length}건${RESET}`,
+function listCategories(): CommandResult {
+  return success(
+    sampleNewsCategories.map(
+      (category) =>
+        `${CYAN}${toCategoryName(category.fileName)}${RESET}  ${DIM}기사 ${category.articles.length}건${RESET}`,
+    ),
   )
 }
 
-function listArticles(categoryName: string): string[] {
+function listArticles(categoryName: string): CommandResult {
   const articles = getNumberedArticles().filter(
     (numbered) => numbered.categoryName === categoryName,
   )
   if (articles.length === 0) {
-    return [
+    return failure(
       `news: '${categoryName}' 카테고리가 없습니다. news ls로 목록을 확인하세요.`,
-    ]
+    )
   }
-  return articles.map(toArticleLine)
+  return success(articles.map(toArticleLine))
 }
 
-function showArticle(numberText: string): string[] {
+function showArticle(numberText: string): CommandResult {
   const numbered = findArticle(numberText)
   if (numbered === undefined) {
-    return [`news: ${numberText || '(번호 없음)'}번 기사가 없습니다.`]
+    return failure(`news: ${numberText || '(번호 없음)'}번 기사가 없습니다.`)
   }
   const { article } = numbered
-  return [
+  return success([
     `${YELLOW}${article.title}${RESET}`,
     `${DIM}${article.source}${RESET}`,
     '',
     article.content,
     '',
     `${CYAN}${article.link}${RESET}`,
-  ]
+  ])
 }
 
-function searchArticles(keyword: string): string[] {
+function searchArticles(keyword: string): CommandResult {
   if (keyword === '') {
-    return ['usage: news grep <키워드>']
+    return failure('usage: news grep <키워드>')
   }
   const matches = getNumberedArticles().filter(
     ({ article }) =>
       article.title.includes(keyword) || article.content.includes(keyword),
   )
   if (matches.length === 0) {
-    return [`news: '${keyword}'이(가) 들어간 기사가 없습니다.`]
+    return failure(`news: '${keyword}'이(가) 들어간 기사가 없습니다.`)
   }
-  return matches.map(toArticleLine)
+  return success(matches.map(toArticleLine))
 }
 
-function bookmarkArticle(numberText: string): string[] {
+function bookmarkArticle(numberText: string): CommandResult {
   if (findArticle(numberText) === undefined) {
-    return [`news: ${numberText || '(번호 없음)'}번 기사가 없습니다.`]
+    return failure(`news: ${numberText || '(번호 없음)'}번 기사가 없습니다.`)
   }
-  return ['북마크는 로그인한 뒤 쓸 수 있습니다.']
+  return failure('북마크는 로그인한 뒤 쓸 수 있습니다.')
 }
 
 // 번호는 모든 카테고리의 기사를 이어서 1번부터 매긴다
@@ -150,6 +154,10 @@ function toCategoryName(fileName: string): string {
   return fileName.replace(/\.[^.]+$/, '')
 }
 
-function output(lines: string[]): CommandResult {
-  return { lines, shouldClear: false }
+function success(lines: string[]): CommandResult {
+  return { lines, shouldClear: false, isError: false }
+}
+
+function failure(message: string): CommandResult {
+  return { lines: [message], shouldClear: false, isError: true }
 }
