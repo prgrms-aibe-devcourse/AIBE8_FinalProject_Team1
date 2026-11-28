@@ -1,0 +1,36 @@
+# dev·main에 PR을 올리거나 병합될 때 프론트 검사 4가지를 자동으로 실행한다.
+# 두 브랜치 모두 보호 규칙에서 이 검사(frontend check) 통과를 요구한다
+name: Frontend CI
+
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev, main]
+
+# 같은 PR에 새 커밋을 올리면 이전 검사는 멈추고 새 커밋만 검사한다
+concurrency:
+  group: frontend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: frontend check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm run format:check
