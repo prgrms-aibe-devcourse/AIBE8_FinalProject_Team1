@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { FitAddon } from '@xterm/addon-fit'
 import { Terminal, type IDecoration, type IMarker } from '@xterm/xterm'
 import '@xterm/xterm/css/xterm.css'
+import type { NewsCategory } from '../../api/news'
 import { runNewsCommand } from '../../news/newsCommands'
 import styles from './NewsTerminal.module.css'
 
@@ -41,10 +42,20 @@ const TERMINAL_OPTIONS = {
 
 type CommandState = 'incomplete' | 'success' | 'error'
 
+type NewsTerminalProps = {
+  newsCategories: NewsCategory[]
+}
+
 // xterm.js는 이 컴포넌트에서만 쓴다 (CLEAN_CODE.md 6. 외부 코드와의 경계).
 // 진짜 쉘 대신 runNewsCommand가 입력한 줄을 해석한다
-export function NewsTerminal() {
+export function NewsTerminal({ newsCategories }: NewsTerminalProps) {
   const containerRef = useRef<HTMLDivElement>(null)
+  // 터미널은 처음 한 번만 만들기 때문에, 명령을 실행할 때 최신 뉴스를 ref에서 읽는다
+  const newsCategoriesRef = useRef(newsCategories)
+
+  useEffect(() => {
+    newsCategoriesRef.current = newsCategories
+  }, [newsCategories])
 
   useEffect(() => {
     const container = containerRef.current
@@ -67,7 +78,10 @@ export function NewsTerminal() {
     resizeObserver.observe(container)
 
     terminal.writeln(WELCOME_MESSAGE)
-    const lineEditor = createLineEditor(terminal)
+    const lineEditor = createLineEditor(
+      terminal,
+      () => newsCategoriesRef.current,
+    )
     lineEditor.writePrompt()
     const dataListener = terminal.onData(lineEditor.handleInput)
 
@@ -82,7 +96,10 @@ export function NewsTerminal() {
 }
 
 // 한 줄 입력(글자 쓰기, 지우기, 이전 명령 불러오기)과 명령 결과 표시를 처리한다
-function createLineEditor(terminal: Terminal) {
+function createLineEditor(
+  terminal: Terminal,
+  getNewsCategories: () => NewsCategory[],
+) {
   let currentLine = ''
   const history: string[] = []
   let historyIndex = 0
@@ -138,7 +155,7 @@ function createLineEditor(terminal: Terminal) {
     }
     historyIndex = history.length
 
-    const result = runNewsCommand(currentLine)
+    const result = runNewsCommand(getNewsCategories(), currentLine)
     // 빈 줄은 VSCode처럼 결과 표시를 하지 않는다
     finishPrompt(isEmptyLine ? undefined : result.isError ? 'error' : 'success')
     if (result.shouldClear) {

@@ -6,7 +6,6 @@ import { IconButton } from './IconButton'
 import {
   ROOT_PATH,
   getParentPath,
-  isProtected,
   type ExplorerNode,
   type ExplorerNodeKind,
 } from './useExplorerTree'
@@ -15,6 +14,7 @@ import styles from './ExplorerView.module.css'
 type ExplorerViewProps = {
   activeTabId: string | undefined
   getChildren: (parentPath: string) => ExplorerNode[]
+  isProtected: (path: string) => boolean
   onOpenFile: (path: string) => void
   onCreateNode: (
     parentPath: string,
@@ -42,6 +42,7 @@ const ROW_PADDING_PX = 8
 export function ExplorerView({
   activeTabId,
   getChildren,
+  isProtected,
   onOpenFile,
   onCreateNode,
   onRenameNode,

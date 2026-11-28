@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { Command } from 'cmdk'
+import type { NewsCategory } from '../../api/news'
 import { toNewsFilePath } from '../../news/newsFiles'
-import { sampleNewsCategories } from '../../news/sampleNews'
 import { searchNewsLines, type NewsLineMatch } from '../../news/searchNews'
 import { FileIcon } from './FileIcon'
 import styles from './CommandPalette.module.css'
 
 type CommandPaletteProps = {
+  newsCategories: NewsCategory[]
   onOpenFile: (path: string) => void
   onSelectMatch: (match: NewsLineMatch, keyword: string) => void
   onClose: () => void
@@ -15,12 +16,13 @@ type CommandPaletteProps = {
 // cmdk는 이 컴포넌트에서만 쓴다 (CLEAN_CODE.md 6. 외부 코드와의 경계).
 // 키워드가 비면 파일 목록, 입력하면 키워드가 들어간 기사 줄 목록을 보여준다
 export function CommandPalette({
+  newsCategories,
   onOpenFile,
   onSelectMatch,
   onClose,
 }: CommandPaletteProps) {
   const [keyword, setKeyword] = useState('')
-  const matches = searchNewsLines(keyword)
+  const matches = searchNewsLines(newsCategories, keyword)
   const isSearching = keyword.trim() !== ''
 
   return (
@@ -49,7 +51,7 @@ export function CommandPalette({
           </Command.Empty>
 
           {!isSearching &&
-            sampleNewsCategories.map((category) => (
+            newsCategories.map((category) => (
               <Command.Item
                 key={category.fileName}
                 value={category.fileName}
