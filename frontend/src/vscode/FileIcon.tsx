@@ -1,4 +1,4 @@
-import { ReactFileIcon } from '../icons/ReactFileIcon'
+import { ReactFileIcon } from './icons/ReactFileIcon'
 import { REACT_ICON, getFileType } from './fileTypes'
 import styles from './FileIcon.module.css'
 

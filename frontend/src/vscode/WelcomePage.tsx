@@ -1,5 +1,5 @@
-import type { NewsCategory } from '../../api/news'
-import { toNewsFilePath } from '../../news/newsFiles'
+import type { NewsCategory } from '../api/news'
+import { toNewsFilePath } from '../domains/news/newsFiles'
 import styles from './WelcomePage.module.css'
 
 type WelcomePageProps = {

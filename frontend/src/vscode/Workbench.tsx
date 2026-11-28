@@ -11,11 +11,11 @@ import { TitleBar } from './TitleBar'
 import { useDirtyFiles } from './useDirtyFiles'
 import { useEditorTabs } from './useEditorTabs'
 import { useExplorerTree, type ExplorerNodeKind } from './useExplorerTree'
-import { useNewsCategories } from './useNewsCategories'
+import { useNewsCategories } from '../domains/news/useNewsCategories'
 import { useWorkbenchLayout } from './useWorkbenchLayout'
 import type { CursorPosition, SearchReveal } from './NewsEditor'
 import { moveFileContents, restoreFileContent } from './editorModels'
-import type { NewsLineMatch } from '../../news/searchNews'
+import type { NewsLineMatch } from '../domains/news/searchNews'
 import styles from './Workbench.module.css'
 
 const START_CURSOR_POSITION: CursorPosition = { lineNumber: 1, column: 1 }

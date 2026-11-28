@@ -231,9 +231,29 @@ global/   ← 공통 (예외, 보안, 설정)
 | --- | --- | --- |
 | 컴포넌트 파일 | PascalCase | `LoginForm.tsx` |
 | 훅 | `use` + 이름 | `useAuth` |
-| API 호출 | `api/` 계층에서만 (컴포넌트에서 직접 fetch·axios 금지) | `api/member.ts` |
+| API 호출 | `api/` 계층에서만, `api/client.ts`의 `apiClient`로 보낸다 (컴포넌트에서 직접 fetch·axios 금지) | `api/member.ts` |
 | 외부 UI 라이브러리 | Monaco, xterm.js, cmdk는 각각 감싸는 컴포넌트 하나에서만 import | `NewsEditor.tsx`만 `monaco-editor`를 import |
-| 폴더 구조 | 팀에서 확정 | `pages/`, `components/`, `hooks/`, `api/` |
+| 폴더 구조 | 아래 「폴더 구조」 | `domains/news/` |
+
+### 폴더 구조 (`frontend/src/`)
+
+```txt
+src/
+  api/          서버 요청. client.ts(axios 인스턴스) + 도메인별 파일(news.ts, member.ts)
+  vscode/       VSCode 모양 화면 틀. 레이아웃, 탐색기, 탭, 에디터, 터미널, 상태바, 아이콘
+  domains/
+    member/     회원 (가입, 로그인, 개인 설정)
+    news/       뉴스 (목록, 기사 → 코드 변환, 검색, 터미널 news 명령, 북마크·구독)
+    chat/       채팅·친구 (AI agent 창)
+    community/  커뮤니티
+    salary/     월급 현황
+    admin/      관리자
+  styles/       VSCode 색 변수 (theme.css)
+```
+
+- 도메인 담당자는 **자기 `domains/<도메인>/` 폴더**와 `api/<도메인>.ts`를 맡는다. 폴더마다 `README.md`에 맡는 기능과 화면 위치가 있다.
+- `vscode/`는 모든 도메인이 같이 쓰는 화면이다. 고칠 때는 PR에 이유를 적고 팀장 리뷰를 받는다.
+- `vscode/`는 도메인 코드를 가져다 화면에 놓을 수 있지만, 도메인끼리는 서로 import하지 않는다. 다른 도메인의 데이터가 필요하면 `api/`로 받는다.
 
 ---
 

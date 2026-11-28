@@ -1,4 +1,4 @@
-import { Workbench } from './components/workbench/Workbench'
+import { Workbench } from './vscode/Workbench'
 
 function App() {
   return <Workbench />

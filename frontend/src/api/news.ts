@@ -1,4 +1,4 @@
-import { sampleNewsCategories } from '../news/sampleNews'
+import { sampleNewsCategories } from '../domains/news/sampleNews'
 
 export type NewsArticle = {
   title: string

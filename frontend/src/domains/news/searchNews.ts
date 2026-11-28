@@ -1,4 +1,4 @@
-import type { NewsCategory } from '../api/news'
+import type { NewsCategory } from '../../api/news'
 import { toNewsFilePath } from './newsFiles'
 import { toNewsFileContent } from './toNewsFileContent'
 

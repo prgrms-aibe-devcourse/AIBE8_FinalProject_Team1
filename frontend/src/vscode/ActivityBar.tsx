@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { ClaudeCodeIcon } from '../icons/ClaudeCodeIcon'
+import { ClaudeCodeIcon } from './icons/ClaudeCodeIcon'
 import type { SideBarView } from './useWorkbenchLayout'
 import styles from './ActivityBar.module.css'
 

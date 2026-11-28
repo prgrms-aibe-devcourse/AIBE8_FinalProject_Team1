@@ -1,9 +1,9 @@
-import type { NewsCategory } from '../../api/news'
-import { findNewsCategory } from '../../news/newsFiles'
+import type { NewsCategory } from '../api/news'
+import { findNewsCategory } from '../domains/news/newsFiles'
 import {
   ARTICLES_VARIABLE_NAME,
   toNewsFileContent,
-} from '../../news/toNewsFileContent'
+} from '../domains/news/toNewsFileContent'
 import { FileIcon } from './FileIcon'
 import { getFileType } from './fileTypes'
 import {

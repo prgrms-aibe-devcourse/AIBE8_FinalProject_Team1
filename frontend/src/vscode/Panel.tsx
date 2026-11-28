@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { NewsCategory } from '../../api/news'
+import type { NewsCategory } from '../api/news'
 import { IconButton } from './IconButton'
 import { NewsTerminal } from './NewsTerminal'
 import styles from './Panel.module.css'
