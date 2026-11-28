@@ -76,7 +76,9 @@ vscode/Workbench.tsx     받은 뉴스를 탐색기·에디터·시작 화면·C
 | `SideBar.tsx`, `ExplorerView.tsx` | 왼쪽 사이드바, 탐색기 (파일·폴더 만들기, 우클릭 메뉴) |
 | `EditorArea.tsx`, `EditorTabs.tsx`, `NewsEditor.tsx` | 가운데 에디터, 탭, Monaco 에디터 |
 | `WelcomePage.tsx` | 처음 열리는 Welcome 탭 |
-| `Panel.tsx`, `NewsTerminal.tsx` | 아래 패널, xterm.js 터미널 |
+| `Panel.tsx`, `NewsTerminal.tsx` | 아래 패널, xterm.js 터미널 (글자 입력, ↑↓ 이전 명령, 결과 표시) |
+| `terminalCommand.ts` | 터미널 명령어 하나의 모양(`TerminalCommand`)과 결과 함수 `success`·`failure` |
+| `terminalCommandRegistry.ts` | 등록된 명령어 목록, 입력을 알맞은 명령으로 보내는 실행기, `help`·`clear` |
 | `SecondarySideBar.tsx` | 오른쪽 AI agent 창 (채팅 자리) |
 | `CommandPalette.tsx` | ⌘P 검색창 (cmdk) |
 | `StatusBar.tsx` | 맨 아래 상태바 |
@@ -106,6 +108,34 @@ vscode/Workbench.tsx     받은 뉴스를 탐색기·에디터·시작 화면·C
 | 사이드바 Source Control, Run and Debug, Containers | 모양만 유지 |
 | Welcome의 New File / Open / Clone, 패널의 Problems·Output 등 | 모양만 유지 |
 
-## 예정
+## 터미널 명령어 추가하는 법
 
-- 터미널 명령어를 도메인별로 등록하는 구조 (#27): 각 도메인이 자기 폴더에 명령을 만들고 목록에 한 줄만 추가하게 바꾼다.
+터미널 엔진(`vscode/`)은 고치지 않고, 자기 도메인 폴더에 명령을 만들어 등록 목록에 한 줄만 추가한다.
+견본은 `domains/news/newsCommands.ts`의 `newsCommand`다.
+
+```ts
+// domains/salary/salaryCommands.ts (예시)
+import { failure, success, type TerminalCommand } from '../../vscode/terminalCommand'
+
+export const salaryCommand: TerminalCommand = {
+  name: 'salary',                          // 'salary today'의 첫 단어
+  usage: ['salary today         오늘 찬 월급'], // help에 자동으로 나온다
+  run: async ([subcommand = '']) => {      // 'salary today' → ['today']
+    if (subcommand !== 'today') {
+      return failure('usage: salary today')
+    }
+    const salary = await getTodaySalary()  // api/salary.ts
+    return success([`오늘 찬 월급: ${salary.amount}원`])
+  },
+}
+```
+
+```ts
+// vscode/terminalCommandRegistry.ts
+const TERMINAL_COMMANDS: TerminalCommand[] = [newsCommand, salaryCommand] // 한 줄 추가
+```
+
+- 결과는 `success(줄 목록)` 또는 `failure(메시지)`로 돌려준다. 실패면 프롬프트 앞에 빨간 ⊗가 붙는다.
+- 서버 요청이 실패해서 에러가 나도 터미널은 멈추지 않고 "명령을 실행하지 못했습니다"를 보여준다.
+- 명령에 뉴스 말고 다른 값(예: 로그인 정보)이 필요하면 `CommandContext`에 추가해 달라고 팀장에게 말한다.
+- 도메인은 다른 도메인을 import하지 않지만, 명령어 모양(`vscode/terminalCommand.ts`)은 가져다 쓴다.

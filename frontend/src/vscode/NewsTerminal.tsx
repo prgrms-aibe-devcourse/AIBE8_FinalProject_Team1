@@ -3,7 +3,8 @@ import { FitAddon } from '@xterm/addon-fit'
 import { Terminal, type IDecoration, type IMarker } from '@xterm/xterm'
 import '@xterm/xterm/css/xterm.css'
 import type { NewsCategory } from '../api/news'
-import { runNewsCommand } from '../domains/news/newsCommands'
+import type { CommandContext } from './terminalCommand'
+import { runTerminalCommand } from './terminalCommandRegistry'
 import styles from './NewsTerminal.module.css'
 
 const PROMPT = 'dev@readme news % '
@@ -78,10 +79,9 @@ export function NewsTerminal({ newsCategories }: NewsTerminalProps) {
     resizeObserver.observe(container)
 
     terminal.writeln(WELCOME_MESSAGE)
-    const lineEditor = createLineEditor(
-      terminal,
-      () => newsCategoriesRef.current,
-    )
+    const lineEditor = createLineEditor(terminal, () => ({
+      newsCategories: newsCategoriesRef.current,
+    }))
     lineEditor.writePrompt()
     const dataListener = terminal.onData(lineEditor.handleInput)
 
@@ -98,7 +98,7 @@ export function NewsTerminal({ newsCategories }: NewsTerminalProps) {
 // 한 줄 입력(글자 쓰기, 지우기, 이전 명령 불러오기)과 명령 결과 표시를 처리한다
 function createLineEditor(
   terminal: Terminal,
-  getNewsCategories: () => NewsCategory[],
+  getCommandContext: () => CommandContext,
 ) {
   let currentLine = ''
   const history: string[] = []
@@ -115,17 +115,18 @@ function createLineEditor(
     }
   }
 
-  // write는 비동기라서, 프롬프트가 실제로 찍힌 뒤에 그 줄을 표시해야 위치가 맞는다.
+  // 명령이 실행되는 동안과, 다음 프롬프트가 실제로 찍히기 전까지는 입력을 바로 처리하지 않는다.
+  // (write는 비동기라서 프롬프트가 찍힌 뒤에 그 줄을 표시해야 위치가 맞는다)
   // 그 사이에 들어온 입력(빠른 타이핑, 붙여넣기)은 모아 뒀다가 프롬프트가 찍힌 뒤 처리한다
-  let isWaitingForPrompt = false
+  let isBusy = false
   const queuedInputs: string[] = []
 
   const writePrompt = () => {
-    isWaitingForPrompt = true
+    isBusy = true
     terminal.write(PROMPT, () => {
       promptMarker = terminal.registerMarker(0)
       pendingDecoration = addDecoration(terminal, promptMarker, 'incomplete')
-      isWaitingForPrompt = false
+      isBusy = false
       queuedInputs.splice(0).forEach(handleInput)
     })
   }
@@ -147,7 +148,8 @@ function createLineEditor(
     writeInput(line)
   }
 
-  const runCurrentLine = () => {
+  const runCurrentLine = async () => {
+    isBusy = true
     terminal.write('\r\n')
     const isEmptyLine = currentLine.trim() === ''
     if (!isEmptyLine) {
@@ -155,7 +157,7 @@ function createLineEditor(
     }
     historyIndex = history.length
 
-    const result = runNewsCommand(getNewsCategories(), currentLine)
+    const result = await runTerminalCommand(currentLine, getCommandContext())
     // 빈 줄은 VSCode처럼 결과 표시를 하지 않는다
     finishPrompt(isEmptyLine ? undefined : result.isError ? 'error' : 'success')
     if (result.shouldClear) {
@@ -167,12 +169,12 @@ function createLineEditor(
   }
 
   const handleInput = (data: string) => {
-    if (isWaitingForPrompt) {
+    if (isBusy) {
       queuedInputs.push(data)
       return
     }
     if (data === ENTER) {
-      runCurrentLine()
+      void runCurrentLine()
       return
     }
     if (data === BACKSPACE) {

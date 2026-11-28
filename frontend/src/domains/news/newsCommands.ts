@@ -1,12 +1,10 @@
 import type { NewsArticle, NewsCategory } from '../../api/news'
-
-// 터미널 명령어 결과. 줄마다 ANSI 색 코드가 들어갈 수 있다.
-// isError면 VSCode처럼 프롬프트 앞에 실패 표시(빨간 ⊗)를 한다
-export type CommandResult = {
-  lines: string[]
-  shouldClear: boolean
-  isError: boolean
-}
+import {
+  failure,
+  success,
+  type CommandResult,
+  type TerminalCommand,
+} from '../../vscode/terminalCommand'
 
 type NumberedArticle = {
   number: number
@@ -19,36 +17,20 @@ const CYAN = '\x1b[36m'
 const DIM = '\x1b[2m'
 const RESET = '\x1b[0m'
 
-const HELP_LINES = [
+const NEWS_USAGE = [
   'news ls              카테고리 목록',
   'news ls <카테고리>    카테고리의 기사 목록',
   'news cat <번호>       기사 보기',
   'news grep <키워드>    제목·내용에서 키워드 검색',
   'news bookmark <번호>  북마크',
-  'clear                화면 지우기',
 ]
 
-// 진짜 쉘을 실행하지 않고, 정해진 뉴스 명령어만 해석한다
-export function runNewsCommand(
-  categories: NewsCategory[],
-  input: string,
-): CommandResult {
-  const [command = '', subcommand = '', ...rest] = input.trim().split(/\s+/)
-  const argument = rest.join(' ')
-
-  if (command === '') {
-    return success([])
-  }
-  if (command === 'clear') {
-    return { lines: [], shouldClear: true, isError: false }
-  }
-  if (command === 'help') {
-    return success(HELP_LINES)
-  }
-  if (command !== 'news') {
-    return failure(`zsh: command not found: ${command}`)
-  }
-  return runNewsSubcommand(categories, subcommand, argument)
+// 터미널의 news 명령어. 다른 도메인 명령어도 이 모양을 따라 만든다
+export const newsCommand: TerminalCommand = {
+  name: 'news',
+  usage: NEWS_USAGE,
+  run: async ([subcommand = '', ...rest], { newsCategories }) =>
+    runNewsSubcommand(newsCategories, subcommand, rest.join(' ')),
 }
 
 function runNewsSubcommand(
@@ -70,7 +52,7 @@ function runNewsSubcommand(
   if (subcommand === 'bookmark') {
     return bookmarkArticle(categories, argument)
   }
-  return success(HELP_LINES)
+  return success(NEWS_USAGE)
 }
 
 function listCategories(categories: NewsCategory[]): CommandResult {
@@ -175,12 +157,4 @@ function toArticleLine({
 
 function toCategoryName(fileName: string): string {
   return fileName.replace(/\.[^.]+$/, '')
-}
-
-function success(lines: string[]): CommandResult {
-  return { lines, shouldClear: false, isError: false }
-}
-
-function failure(message: string): CommandResult {
-  return { lines: [message], shouldClear: false, isError: true }
 }
