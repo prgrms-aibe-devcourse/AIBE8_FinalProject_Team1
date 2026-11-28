@@ -12,7 +12,19 @@ npm install
 npm run dev            # http://localhost:5173
 ```
 
-PR 올리기 전: `npm run lint`, `npm run typecheck`, `npm run build`, `npm run format:check`
+## 검사 (CI)
+
+dev에 PR을 올리면 GitHub Actions(`.github/workflows/frontend-ci.yml`)가 아래 4가지를 자동으로 실행한다.
+PR 아래에 ✅가 떠야 병합한다. ❌면 Details에서 실패한 단계를 보고 고친다.
+
+| 명령어 | 도구 | 무엇을 검사하나 |
+| --- | --- | --- |
+| `npm run lint` | oxlint | 실수하기 쉬운 코드 습관 (안 쓰는 변수, 항상 참인 조건문) |
+| `npm run typecheck` | TypeScript | 타입이 맞는지 (잘못된 props, 틀린 import 경로) |
+| `npm run build` | Vite | 배포할 파일이 실제로 만들어지는지 |
+| `npm run format:check` | Prettier | 코드 모양이 팀 규칙과 같은지 (`npm run format`으로 자동 정리) |
+
+CI 결과를 기다리지 않고 미리 확인하고 싶으면 `frontend/`에서 직접 실행해도 된다.
 
 ## 폴더 한눈에 보기
 
