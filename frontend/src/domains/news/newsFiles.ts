@@ -1,4 +1,4 @@
-import type { NewsCategory } from '../api/news'
+import type { NewsCategory } from '../../api/news'
 
 // 뉴스 카테고리 파일은 탐색기의 src 폴더 안에 있다
 export const NEWS_FOLDER_NAME = 'src'

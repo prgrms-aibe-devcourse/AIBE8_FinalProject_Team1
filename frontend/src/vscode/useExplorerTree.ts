@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import type { NewsCategory } from '../../api/news'
-import { NEWS_FOLDER_NAME, toNewsFilePath } from '../../news/newsFiles'
+import type { NewsCategory } from '../api/news'
+import { NEWS_FOLDER_NAME, toNewsFilePath } from '../domains/news/newsFiles'
 
 export type ExplorerNodeKind = 'file' | 'folder'
 

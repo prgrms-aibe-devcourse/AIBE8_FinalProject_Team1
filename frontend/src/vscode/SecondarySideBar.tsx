@@ -1,6 +1,6 @@
 import { useState, type FormEvent, type ReactElement } from 'react'
-import { ClaudeCodeIcon } from '../icons/ClaudeCodeIcon'
-import { CodexIcon } from '../icons/CodexIcon'
+import { ClaudeCodeIcon } from './icons/ClaudeCodeIcon'
+import { CodexIcon } from './icons/CodexIcon'
 import { IconButton } from './IconButton'
 import styles from './SecondarySideBar.module.css'
 

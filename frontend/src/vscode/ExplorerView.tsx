@@ -1,5 +1,5 @@
 import { Fragment, useRef, useState, type MouseEvent } from 'react'
-import { NEWS_FOLDER_NAME } from '../../news/newsFiles'
+import { NEWS_FOLDER_NAME } from '../domains/news/newsFiles'
 import { ContextMenu, type ContextMenuItem } from './ContextMenu'
 import { FileIcon } from './FileIcon'
 import { IconButton } from './IconButton'

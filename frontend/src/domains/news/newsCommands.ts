@@ -1,4 +1,4 @@
-import type { NewsArticle, NewsCategory } from '../api/news'
+import type { NewsArticle, NewsCategory } from '../../api/news'
 
 // 터미널 명령어 결과. 줄마다 ANSI 색 코드가 들어갈 수 있다.
 // isError면 VSCode처럼 프롬프트 앞에 실패 표시(빨간 ⊗)를 한다

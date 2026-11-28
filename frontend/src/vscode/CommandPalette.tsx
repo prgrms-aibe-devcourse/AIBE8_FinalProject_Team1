@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Command } from 'cmdk'
-import type { NewsCategory } from '../../api/news'
-import { toNewsFilePath } from '../../news/newsFiles'
-import { searchNewsLines, type NewsLineMatch } from '../../news/searchNews'
+import type { NewsCategory } from '../api/news'
+import { toNewsFilePath } from '../domains/news/newsFiles'
+import { searchNewsLines, type NewsLineMatch } from '../domains/news/searchNews'
 import { FileIcon } from './FileIcon'
 import styles from './CommandPalette.module.css'
 

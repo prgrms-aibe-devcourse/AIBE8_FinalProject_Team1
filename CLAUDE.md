@@ -31,6 +31,7 @@
 
 ## 구조
 - frontend/: 웹 화면 (React + TypeScript + Vite)
+  - api/: 서버 요청, vscode/: VSCode 모양 화면 틀, domains/{도메인}: 도메인 화면 — 자세한 내용은 docs/FRONTEND.md
 - desktop/: Electron 앱 (frontend 빌드 결과를 띄움)
 - backend/: Spring Boot API 서버
   - domain/{도메인}: 엔티티 하나당 패키지 하나, DTO만 dto 하위 패키지
