@@ -1,5 +1,5 @@
+import type { NewsCategory } from '../api/news'
 import { toNewsFilePath } from './newsFiles'
-import { sampleNewsCategories } from './sampleNews'
 import { toNewsFileContent } from './toNewsFileContent'
 
 // 에디터에 열리는 뉴스 파일 안에서 키워드가 들어간 줄
@@ -14,13 +14,16 @@ export type NewsLineMatch = {
 const MAX_MATCH_COUNT = 50
 
 // 에디터에 보이는 내용과 똑같은 텍스트에서 찾아야 줄 번호가 맞는다
-export function searchNewsLines(keyword: string): NewsLineMatch[] {
+export function searchNewsLines(
+  categories: NewsCategory[],
+  keyword: string,
+): NewsLineMatch[] {
   const lowerKeyword = keyword.trim().toLowerCase()
   if (lowerKeyword === '') {
     return []
   }
 
-  return sampleNewsCategories
+  return categories
     .flatMap((category) =>
       toNewsFileContent(category)
         .split('\n')

@@ -1,3 +1,4 @@
+import type { NewsCategory } from '../../api/news'
 import { findNewsCategory } from '../../news/newsFiles'
 import {
   ARTICLES_VARIABLE_NAME,
@@ -17,6 +18,7 @@ import { WelcomePage } from './WelcomePage'
 import styles from './EditorArea.module.css'
 
 type EditorAreaProps = {
+  newsCategories: NewsCategory[]
   openTabIds: string[]
   activeTabId: string | undefined
   onOpenFile: (path: string) => void
@@ -32,6 +34,7 @@ type EditorAreaProps = {
 }
 
 export function EditorArea({
+  newsCategories,
   openTabIds,
   activeTabId,
   onOpenFile,
@@ -59,10 +62,11 @@ export function EditorArea({
         onOpenAgent={onOpenAgent}
       />
       {activeTabId === WELCOME_TAB_ID && (
-        <WelcomePage onOpenFile={onOpenFile} />
+        <WelcomePage newsCategories={newsCategories} onOpenFile={onOpenFile} />
       )}
       {isFileOpen && (
         <FileEditor
+          newsCategories={newsCategories}
           path={activeTabId}
           searchReveal={searchReveal}
           onCursorChange={onCursorChange}
@@ -76,6 +80,7 @@ export function EditorArea({
 }
 
 type FileEditorProps = {
+  newsCategories: NewsCategory[]
   path: string
   searchReveal: SearchReveal | undefined
   onCursorChange: (position: CursorPosition) => void
@@ -85,13 +90,14 @@ type FileEditorProps = {
 
 // 뉴스 파일은 기사를 읽기 전용으로, 탐색기에서 만든 파일은 빈 파일로 열어 입력할 수 있다
 function FileEditor({
+  newsCategories,
   path,
   searchReveal,
   onCursorChange,
   onContentChange,
   onSave,
 }: FileEditorProps) {
-  const newsCategory = findNewsCategory(path)
+  const newsCategory = findNewsCategory(newsCategories, path)
   const pathSegments = path.split('/')
   const fileName = pathSegments[pathSegments.length - 1]
 

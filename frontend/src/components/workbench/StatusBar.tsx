@@ -6,12 +6,17 @@ import styles from './StatusBar.module.css'
 type StatusBarProps = {
   activeTabId: string | undefined
   cursorPosition: CursorPosition
+  hasNewsLoadError: boolean
 }
 
 const BRANCH_NAME = 'main'
 const FILE_INFO_ITEMS = ['Spaces: 2', 'UTF-8', 'LF']
 
-export function StatusBar({ activeTabId, cursorPosition }: StatusBarProps) {
+export function StatusBar({
+  activeTabId,
+  cursorPosition,
+  hasNewsLoadError,
+}: StatusBarProps) {
   const isFileOpen = activeTabId !== undefined && activeTabId !== WELCOME_TAB_ID
 
   return (
@@ -28,6 +33,12 @@ export function StatusBar({ activeTabId, cursorPosition }: StatusBarProps) {
           <i className="codicon codicon-error" />0
           <i className="codicon codicon-warning" />0
         </span>
+        {hasNewsLoadError && (
+          <span className={styles.item}>
+            <i className="codicon codicon-warning" />
+            Failed to load news
+          </span>
+        )}
       </div>
       <div className={styles.side}>
         {isFileOpen && (

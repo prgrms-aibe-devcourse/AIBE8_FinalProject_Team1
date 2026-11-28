@@ -1,4 +1,4 @@
-import type { NewsArticle, NewsCategory } from './sampleNews'
+import type { NewsArticle, NewsCategory } from '../api/news'
 
 export const ARTICLES_VARIABLE_NAME = 'articles'
 

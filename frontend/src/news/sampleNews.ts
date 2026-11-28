@@ -1,17 +1,6 @@
+import type { NewsCategory } from '../api/news'
+
 // 백엔드 뉴스 API를 연결하기 전까지 화면에 보여줄 샘플 데이터
-
-export type NewsArticle = {
-  title: string
-  content: string
-  link: string
-  source: string
-}
-
-export type NewsCategory = {
-  fileName: string
-  articles: NewsArticle[]
-}
-
 export const sampleNewsCategories: NewsCategory[] = [
   {
     fileName: '사회.mjs',

@@ -1,8 +1,9 @@
-import { sampleNewsCategories } from '../../news/sampleNews'
+import type { NewsCategory } from '../../api/news'
 import { toNewsFilePath } from '../../news/newsFiles'
 import styles from './WelcomePage.module.css'
 
 type WelcomePageProps = {
+  newsCategories: NewsCategory[]
   onOpenFile: (path: string) => void
 }
 
@@ -13,7 +14,7 @@ const START_ITEMS = [
 ]
 
 // VSCode 시작 화면 모양. Recent에 카테고리 파일을 보여주고 누르면 연다
-export function WelcomePage({ onOpenFile }: WelcomePageProps) {
+export function WelcomePage({ newsCategories, onOpenFile }: WelcomePageProps) {
   return (
     <div className={styles.welcomePage}>
       <h1 className={styles.title}>README</h1>
@@ -32,7 +33,7 @@ export function WelcomePage({ onOpenFile }: WelcomePageProps) {
 
         <section>
           <h2 className={styles.heading}>Recent</h2>
-          {sampleNewsCategories.map((category) => (
+          {newsCategories.map((category) => (
             <button
               key={category.fileName}
               type="button"

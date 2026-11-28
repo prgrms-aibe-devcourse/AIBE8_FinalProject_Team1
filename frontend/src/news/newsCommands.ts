@@ -1,4 +1,4 @@
-import { sampleNewsCategories, type NewsArticle } from './sampleNews'
+import type { NewsArticle, NewsCategory } from '../api/news'
 
 // 터미널 명령어 결과. 줄마다 ANSI 색 코드가 들어갈 수 있다.
 // isError면 VSCode처럼 프롬프트 앞에 실패 표시(빨간 ⊗)를 한다
@@ -29,7 +29,10 @@ const HELP_LINES = [
 ]
 
 // 진짜 쉘을 실행하지 않고, 정해진 뉴스 명령어만 해석한다
-export function runNewsCommand(input: string): CommandResult {
+export function runNewsCommand(
+  categories: NewsCategory[],
+  input: string,
+): CommandResult {
   const [command = '', subcommand = '', ...rest] = input.trim().split(/\s+/)
   const argument = rest.join(' ')
 
@@ -45,39 +48,45 @@ export function runNewsCommand(input: string): CommandResult {
   if (command !== 'news') {
     return failure(`zsh: command not found: ${command}`)
   }
-  return runNewsSubcommand(subcommand, argument)
+  return runNewsSubcommand(categories, subcommand, argument)
 }
 
 function runNewsSubcommand(
+  categories: NewsCategory[],
   subcommand: string,
   argument: string,
 ): CommandResult {
   if (subcommand === 'ls') {
-    return argument === '' ? listCategories() : listArticles(argument)
+    return argument === ''
+      ? listCategories(categories)
+      : listArticles(categories, argument)
   }
   if (subcommand === 'cat') {
-    return showArticle(argument)
+    return showArticle(categories, argument)
   }
   if (subcommand === 'grep') {
-    return searchArticles(argument)
+    return searchArticles(categories, argument)
   }
   if (subcommand === 'bookmark') {
-    return bookmarkArticle(argument)
+    return bookmarkArticle(categories, argument)
   }
   return success(HELP_LINES)
 }
 
-function listCategories(): CommandResult {
+function listCategories(categories: NewsCategory[]): CommandResult {
   return success(
-    sampleNewsCategories.map(
+    categories.map(
       (category) =>
         `${CYAN}${toCategoryName(category.fileName)}${RESET}  ${DIM}기사 ${category.articles.length}건${RESET}`,
     ),
   )
 }
 
-function listArticles(categoryName: string): CommandResult {
-  const articles = getNumberedArticles().filter(
+function listArticles(
+  categories: NewsCategory[],
+  categoryName: string,
+): CommandResult {
+  const articles = getNumberedArticles(categories).filter(
     (numbered) => numbered.categoryName === categoryName,
   )
   if (articles.length === 0) {
@@ -88,8 +97,11 @@ function listArticles(categoryName: string): CommandResult {
   return success(articles.map(toArticleLine))
 }
 
-function showArticle(numberText: string): CommandResult {
-  const numbered = findArticle(numberText)
+function showArticle(
+  categories: NewsCategory[],
+  numberText: string,
+): CommandResult {
+  const numbered = findArticle(categories, numberText)
   if (numbered === undefined) {
     return failure(`news: ${numberText || '(번호 없음)'}번 기사가 없습니다.`)
   }
@@ -104,11 +116,14 @@ function showArticle(numberText: string): CommandResult {
   ])
 }
 
-function searchArticles(keyword: string): CommandResult {
+function searchArticles(
+  categories: NewsCategory[],
+  keyword: string,
+): CommandResult {
   if (keyword === '') {
     return failure('usage: news grep <키워드>')
   }
-  const matches = getNumberedArticles().filter(
+  const matches = getNumberedArticles(categories).filter(
     ({ article }) =>
       article.title.includes(keyword) || article.content.includes(keyword),
   )
@@ -118,16 +133,19 @@ function searchArticles(keyword: string): CommandResult {
   return success(matches.map(toArticleLine))
 }
 
-function bookmarkArticle(numberText: string): CommandResult {
-  if (findArticle(numberText) === undefined) {
+function bookmarkArticle(
+  categories: NewsCategory[],
+  numberText: string,
+): CommandResult {
+  if (findArticle(categories, numberText) === undefined) {
     return failure(`news: ${numberText || '(번호 없음)'}번 기사가 없습니다.`)
   }
   return failure('북마크는 로그인한 뒤 쓸 수 있습니다.')
 }
 
 // 번호는 모든 카테고리의 기사를 이어서 1번부터 매긴다
-function getNumberedArticles(): NumberedArticle[] {
-  return sampleNewsCategories
+function getNumberedArticles(categories: NewsCategory[]): NumberedArticle[] {
+  return categories
     .flatMap((category) =>
       category.articles.map((article) => ({
         categoryName: toCategoryName(category.fileName),
@@ -137,9 +155,14 @@ function getNumberedArticles(): NumberedArticle[] {
     .map((numbered, index) => ({ ...numbered, number: index + 1 }))
 }
 
-function findArticle(numberText: string): NumberedArticle | undefined {
+function findArticle(
+  categories: NewsCategory[],
+  numberText: string,
+): NumberedArticle | undefined {
   const number = Number(numberText)
-  return getNumberedArticles().find((numbered) => numbered.number === number)
+  return getNumberedArticles(categories).find(
+    (numbered) => numbered.number === number,
+  )
 }
 
 function toArticleLine({

@@ -1,10 +1,6 @@
 import { useState } from 'react'
-import { sampleNewsCategories } from '../../news/sampleNews'
-import {
-  NEWS_FOLDER_NAME,
-  findNewsCategory,
-  toNewsFilePath,
-} from '../../news/newsFiles'
+import type { NewsCategory } from '../../api/news'
+import { NEWS_FOLDER_NAME, toNewsFilePath } from '../../news/newsFiles'
 
 export type ExplorerNodeKind = 'file' | 'folder'
 
@@ -17,18 +13,18 @@ export type ExplorerNode = {
 // 워크스페이스 맨 위의 경로. 'src/사회.mjs'의 부모는 'src', 'src'의 부모는 ''
 export const ROOT_PATH = ''
 
-const INITIAL_NODES: ExplorerNode[] = [
-  { path: NEWS_FOLDER_NAME, name: NEWS_FOLDER_NAME, kind: 'folder' },
-  ...sampleNewsCategories.map((category) => ({
-    path: toNewsFilePath(category),
-    name: category.fileName,
-    kind: 'file' as const,
-  })),
-]
+const NEWS_FOLDER_NODE: ExplorerNode = {
+  path: NEWS_FOLDER_NAME,
+  name: NEWS_FOLDER_NAME,
+  kind: 'folder',
+}
 
-// 탐색기의 파일·폴더 목록. 화면에서 만든 파일은 서버에 저장하지 않는다
-export function useExplorerTree() {
-  const [nodes, setNodes] = useState(INITIAL_NODES)
+// 탐색기의 파일·폴더 목록. 뉴스 파일은 받아온 뉴스로 만들고(뉴스가 늦게 와도 화면에서 만든 파일은 남는다),
+// 화면에서 만든 파일은 서버에 저장하지 않는다
+export function useExplorerTree(categories: NewsCategory[]) {
+  const [createdNodes, setCreatedNodes] = useState<ExplorerNode[]>([])
+  const newsNodes = [NEWS_FOLDER_NODE, ...categories.map(toNewsNode)]
+  const nodes = [...newsNodes, ...createdNodes]
 
   const getChildren = (parentPath: string) =>
     nodes
@@ -46,7 +42,7 @@ export function useExplorerTree() {
     if (!isValidName(trimmedName) || hasNode(path)) {
       return undefined
     }
-    setNodes([...nodes, { path, name: trimmedName, kind }])
+    setCreatedNodes([...createdNodes, { path, name: trimmedName, kind }])
     return path
   }
 
@@ -57,8 +53,8 @@ export function useExplorerTree() {
     if (isProtected(path) || !isValidName(trimmedName) || hasNode(newPath)) {
       return undefined
     }
-    setNodes(
-      nodes.map((node) => {
+    setCreatedNodes(
+      createdNodes.map((node) => {
         if (node.path === path) {
           return { ...node, path: newPath, name: trimmedName }
         }
@@ -75,20 +71,29 @@ export function useExplorerTree() {
     if (isProtected(path)) {
       return false
     }
-    setNodes(
-      nodes.filter((node) => node.path !== path && !isInside(node.path, path)),
+    setCreatedNodes(
+      createdNodes.filter(
+        (node) => node.path !== path && !isInside(node.path, path),
+      ),
     )
     return true
   }
 
   const hasNode = (path: string) => nodes.some((node) => node.path === path)
 
-  return { getChildren, createNode, renameNode, deleteNode }
+  // 뉴스 폴더와 뉴스 파일은 이름 바꾸기·삭제를 막는다
+  const isProtected = (path: string) =>
+    newsNodes.some((node) => node.path === path)
+
+  return { getChildren, createNode, renameNode, deleteNode, isProtected }
 }
 
-// 뉴스 폴더와 뉴스 파일은 이름 바꾸기·삭제를 막는다
-export function isProtected(path: string): boolean {
-  return path === NEWS_FOLDER_NAME || findNewsCategory(path) !== undefined
+function toNewsNode(category: NewsCategory): ExplorerNode {
+  return {
+    path: toNewsFilePath(category),
+    name: category.fileName,
+    kind: 'file',
+  }
 }
 
 export function getParentPath(path: string): string {

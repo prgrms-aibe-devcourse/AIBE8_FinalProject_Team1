@@ -1,9 +1,11 @@
 import { useState } from 'react'
+import type { NewsCategory } from '../../api/news'
 import { IconButton } from './IconButton'
 import { NewsTerminal } from './NewsTerminal'
 import styles from './Panel.module.css'
 
 type PanelProps = {
+  newsCategories: NewsCategory[]
   onClose: () => void
 }
 
@@ -31,7 +33,7 @@ const PANEL_TABS: { tab: PanelTab; label: string; emptyMessage: string }[] = [
 ]
 
 // 다른 탭을 보고 와도 터미널 내용이 남도록, 터미널은 숨기기만 하고 계속 띄워 둔다
-export function Panel({ onClose }: PanelProps) {
+export function Panel({ newsCategories, onClose }: PanelProps) {
   const [activeTab, setActiveTab] = useState<PanelTab>('terminal')
   const activeTabInfo = PANEL_TABS.find(
     (panelTab) => panelTab.tab === activeTab,
@@ -74,7 +76,7 @@ export function Panel({ onClose }: PanelProps) {
 
       <div className={styles.body}>
         <div className={styles.terminal} hidden={activeTab !== 'terminal'}>
-          <NewsTerminal />
+          <NewsTerminal newsCategories={newsCategories} />
         </div>
         {activeTab !== 'terminal' && (
           <p className={styles.emptyMessage}>{activeTabInfo?.emptyMessage}</p>

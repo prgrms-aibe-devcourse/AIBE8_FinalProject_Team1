@@ -11,6 +11,7 @@ import { TitleBar } from './TitleBar'
 import { useDirtyFiles } from './useDirtyFiles'
 import { useEditorTabs } from './useEditorTabs'
 import { useExplorerTree, type ExplorerNodeKind } from './useExplorerTree'
+import { useNewsCategories } from './useNewsCategories'
 import { useWorkbenchLayout } from './useWorkbenchLayout'
 import type { CursorPosition, SearchReveal } from './NewsEditor'
 import { moveFileContents, restoreFileContent } from './editorModels'
@@ -21,9 +22,10 @@ const START_CURSOR_POSITION: CursorPosition = { lineNumber: 1, column: 1 }
 
 // VSCode 화면 전체 배치. 각 영역의 열림 상태와 열린 탭을 여기서 관리한다
 export function Workbench() {
+  const news = useNewsCategories()
   const layout = useWorkbenchLayout()
   const editorTabs = useEditorTabs()
-  const explorerTree = useExplorerTree()
+  const explorerTree = useExplorerTree(news.categories)
   const dirtyFiles = useDirtyFiles()
   const [cursorPosition, setCursorPosition] = useState(START_CURSOR_POSITION)
   const [agentTab, setAgentTab] = useState<AgentTab>('codex')
@@ -115,6 +117,7 @@ export function Workbench() {
               <ExplorerView
                 activeTabId={editorTabs.activeTabId}
                 getChildren={explorerTree.getChildren}
+                isProtected={explorerTree.isProtected}
                 onOpenFile={editorTabs.openTab}
                 onCreateNode={createExplorerNode}
                 onRenameNode={renameExplorerNode}
@@ -125,6 +128,7 @@ export function Workbench() {
         )}
         <div className={styles.center}>
           <EditorArea
+            newsCategories={news.categories}
             openTabIds={editorTabs.openTabIds}
             activeTabId={editorTabs.activeTabId}
             onOpenFile={editorTabs.openTab}
@@ -138,7 +142,12 @@ export function Workbench() {
             onRun={layout.showPanel}
             onOpenAgent={openAgent}
           />
-          {layout.isPanelVisible && <Panel onClose={layout.togglePanel} />}
+          {layout.isPanelVisible && (
+            <Panel
+              newsCategories={news.categories}
+              onClose={layout.togglePanel}
+            />
+          )}
         </div>
         {layout.isSecondarySideBarVisible && (
           <SecondarySideBar
@@ -150,6 +159,7 @@ export function Workbench() {
       </div>
       {layout.isCommandPaletteOpen && (
         <CommandPalette
+          newsCategories={news.categories}
           onOpenFile={openFileFromPalette}
           onSelectMatch={revealSearchMatch}
           onClose={layout.closeCommandPalette}
@@ -158,6 +168,7 @@ export function Workbench() {
       <StatusBar
         activeTabId={editorTabs.activeTabId}
         cursorPosition={cursorPosition}
+        hasNewsLoadError={news.hasLoadError}
       />
     </div>
   )
